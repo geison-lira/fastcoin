@@ -16,7 +16,7 @@ func Run(keysPath string) {
 	fmt.Println("- Launching wallet...")
 	if !utils.FileExists(keysPath) {
 		var usrInput string
-		fmt.Println("> No keys found, generate new ones? [y/n]: ")
+		fmt.Printf("> No keys found, generate new ones? [y/n]: ")
 		fmt.Scanln(&usrInput)
 		if strings.EqualFold(usrInput, "y") {
 			var err error
