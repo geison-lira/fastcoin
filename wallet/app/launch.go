@@ -45,5 +45,20 @@ func Run(keysPath string) {
 		}
 		runWalletExecutionWorkflow()
 	}
-	//for loop of transactions
+	for {
+		var usrInput string
+		fmt.Printf("> ")
+		fmt.Scanln(&usrInput)
+		usrInputSliced := strings.Fields(usrInput)
+		switch usrInputSliced[0] {
+		case "tx":
+			runSendCommandWorkflow()
+		case "st":
+			runStatementCommandWorkflow()
+		case "bl":
+			runBalanceCommandWorkflow()
+		case "h":
+			runHelpCommandWorkflow()
+		}
+	}
 }
