@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func KeysGenerate(keysPath string) (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
+func KeysGenerate() (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
 	privKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, nil, err

@@ -20,7 +20,7 @@ func Run(keysPath string) {
 		fmt.Scanln(&usrInput)
 		if strings.EqualFold(usrInput, "y") {
 			var err error
-			privKey, pubKey, err = handlers.KeysGenerate(keysPath)
+			privKey, pubKey, err = handlers.KeysGenerate()
 			if err != nil {
 				fmt.Printf("# Error generating keys: %v\n", err)
 				os.Exit(1)
