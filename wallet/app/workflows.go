@@ -33,5 +33,5 @@ func runHelpCommandWorkflow() {
 }
 
 func runUnknownCommandWorkflow() {
-	fmt.Println("--#-- Unknown command, type h to see all valid commands. --#--")
+	fmt.Println("# Error in command, type h to see all valid commands.")
 }
