@@ -31,3 +31,7 @@ func runHelpCommandWorkflow() {
 	fmt.Println("-Check Balance   | bl                              ")
 	fmt.Println("-Help            | h                               ")
 }
+
+func runUnknownCommandWorkflow() {
+	fmt.Println("--#-- Unknown command, type h to see all valid commands. --#--")
+}

@@ -59,6 +59,8 @@ func Run(keysPath string) {
 			runBalanceCommandWorkflow()
 		case "h":
 			runHelpCommandWorkflow()
+		default:
+			runUnknownCommandWorkflow()
 		}
 	}
 }
