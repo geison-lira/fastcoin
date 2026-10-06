@@ -63,6 +63,10 @@ func runHelpCommandWorkflow() {
 	fmt.Println("-Help            | h                               ")
 }
 
+func runWrongCommandWorkflow() {
+	fmt.Println("# Error in command structure, type h to see all commands structures.")
+}
+
 func runUnknownCommandWorkflow() {
 	fmt.Println("# Error in command, type h to see all valid commands.")
 }
