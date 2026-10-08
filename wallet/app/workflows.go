@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -8,10 +9,20 @@ import (
 )
 
 func runWalletCreationWorkflow(keysPath string) {
-	var usrInput string
 	fmt.Printf("> No keys found, generate new ones? [y/n]: ")
-	fmt.Scanln(&usrInput)
-	if strings.EqualFold(usrInput, "y") {
+	scanner := bufio.NewScanner((os.Stdin))
+	if !scanner.Scan() {
+		if err := scanner.Err(); err != nil {
+			fmt.Printf("# Error reading input: %v\n", err)
+			os.Exit(1)
+		} else {
+			fmt.Println("\n- Closing wallet...")
+			os.Exit(0)
+		}
+	}
+	usrInput := scanner.Text()
+	usrInputSliced := strings.Fields(usrInput)
+	if strings.EqualFold(usrInputSliced[0], "y") {
 		var err error
 		privKey, pubKey, err = handlers.KeysGenerate()
 		if err != nil {

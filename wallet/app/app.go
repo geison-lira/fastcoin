@@ -61,7 +61,9 @@ func Run(keysPath string) {
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Printf("# Error reading input: %v\n", err)
+		os.Exit(1)
 	} else {
 		fmt.Println("\n- Closing wallet...")
+		os.Exit(0)
 	}
 }
