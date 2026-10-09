@@ -4,11 +4,22 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/sha256"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/pem"
 	"errors"
 	"os"
 )
+
+func AddressGenerate(pubKey *ecdsa.PublicKey) (string, error) {
+	pubBytes, err := x509.MarshalPKIXPublicKey(pubKey)
+	if err != nil {
+		return "", err
+	}
+	pubHash := sha256.Sum256(pubBytes)
+	return hex.EncodeToString(pubHash[:16]), nil
+}
 
 func KeysGenerate() (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
 	privKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
