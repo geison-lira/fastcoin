@@ -1,6 +1,6 @@
 type RPCRequest struct {
 	Method string      `json:"method"`
-	Params interface{} `json:params`
+	Params interface{} `json:"params"`
 }
 
 type RPCResponse struct {
