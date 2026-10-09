@@ -1,3 +1,5 @@
+package types
+
 type RPCRequest struct {
 	Method string      `json:"method"`
 	Params interface{} `json:"params"`
