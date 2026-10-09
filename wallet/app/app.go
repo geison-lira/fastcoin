@@ -23,7 +23,13 @@ func Run(keysPath string) {
 	for {
 		fmt.Printf("> ")
 		if !scanner.Scan() {
-			break
+			if err := scanner.Err(); err != nil {
+				fmt.Printf("# Error reading input: %v\n", err)
+				os.Exit(1)
+			} else {
+				fmt.Println("\n- Closing wallet...")
+				os.Exit(0)
+			}
 		}
 		usrInput := scanner.Text()
 		usrInputSliced := strings.Fields(usrInput)
@@ -58,12 +64,5 @@ func Run(keysPath string) {
 		default:
 			runUnknownCommandWorkflow()
 		}
-	}
-	if err := scanner.Err(); err != nil {
-		fmt.Printf("# Error reading input: %v\n", err)
-		os.Exit(1)
-	} else {
-		fmt.Println("\n- Closing wallet...")
-		os.Exit(0)
 	}
 }
