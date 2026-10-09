@@ -1,12 +1,12 @@
 package types
 
 type RPCRequest struct {
-	Method string      `json:"method"`
-	Params interface{} `json:"params"`
+	Method string `json:"method"`
+	Params any    `json:"params"`
 }
 
 type RPCResponse struct {
-	Success bool        `json:"success"`
-	Data    interface{} `json:"data,omitempty"`
-	Error   string      `json:"error,omitempty"`
+	Success bool   `json:"success"`
+	Data    any    `json:"data,omitempty"`
+	Error   string `json:"error,omitempty"`
 }
