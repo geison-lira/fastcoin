@@ -1,3 +1,5 @@
+package types
+
 type BalanceRequest struct {
 	Address string `json:"address"`
 }
