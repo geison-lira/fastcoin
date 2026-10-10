@@ -33,7 +33,7 @@ func (w *WalletApp) Enter(keysPath string) {
 				fmt.Printf("sys@root> Error reading input: %v\n", err)
 				os.Exit(1)
 			} else {
-				fmt.Println("\nsys@root> Closing wallet...")
+				fmt.Println("sys@root> Closing wallet...")
 				os.Exit(0)
 			}
 		}
@@ -80,7 +80,7 @@ func (w *WalletApp) walletCreate(keysPath string) {
 			fmt.Printf("sys@root> Error reading input: %v\n", err)
 			os.Exit(1)
 		} else {
-			fmt.Println("\nsys@root> Closing wallet...")
+			fmt.Println("sys@root> Closing wallet...")
 			os.Exit(0)
 		}
 	}
@@ -104,7 +104,7 @@ func (w *WalletApp) walletCreate(keysPath string) {
 		}
 		fmt.Println("sys@root> Welcome to the Fastcoin Blockchain, your wallet was successfully created and your keys are stored in keys.pem.")
 	} else {
-		fmt.Println("\nsys@root> Closing wallet...")
+		fmt.Println("sys@root> Closing wallet...")
 		os.Exit(0)
 	}
 }
@@ -118,7 +118,7 @@ func (w *WalletApp) walletLoad(keysPath string) {
 		os.Exit(1)
 	}
 	w.Address, err = handlers.AddressGenerate(w.PubKey)
-	fmt.Printf("sys@root> Welcome back to your wallet, type a command and it's parameters (type h for help).")
+	fmt.Println("sys@root> Welcome back to your wallet, type a command and it's parameters (type h for help).")
 }
 
 func (w *WalletApp) transactionSend(usrInputSlice []string) {
@@ -141,10 +141,10 @@ func (w *WalletApp) balanceCheck() {
 
 func (w *WalletApp) helpView() {
 	fmt.Println("     Command     |            Structure            ")
-	fmt.Println("-Send Currency   | tx <ammount> <recipient_pubKey> ")
-	fmt.Println("-Check Statement | st                              ")
-	fmt.Println("-Check Balance   | bl                              ")
-	fmt.Println("-Help            | h                               ")
+	fmt.Println("Send Currency    |  tx <ammount> <recipient_pubKey>")
+	fmt.Println("Check Statement  |  st                             ")
+	fmt.Println("Check Balance    |  bl                             ")
+	fmt.Println("Help             |  h                              ")
 }
 
 func (w *WalletApp) commandError() {
