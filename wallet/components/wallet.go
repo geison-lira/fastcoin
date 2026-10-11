@@ -157,9 +157,28 @@ func (w *WalletApp) transaction(usrInputSlice []string) {
 }
 
 func (w *WalletApp) statement() {
-	//
-	fmt.Println("- Fetching statement...")
-	//
+	sReq := StatementRequest{Address: w.Address}
+	req := RPCRequest{Method: "get_st", Params: sReq}
+	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
+	res, err := rpc.Send(req)
+	if err != nil {
+		fmt.Printf("sys@root> Error in network: %v\n", err)
+		return
+	}
+	if res.Success {
+		bytes, _ := json.Marshal(res.Data)
+		var sRes StatementResponse
+		json.Unmarshal(bytes, &sRes)
+		fmt.Printf("===Statement for %s===\n", w.Address)
+		fmt.Printf("Balance: %d Fastcoins\n", sRes.Balance)
+		fmt.Println("Transactions:")
+		for _, tx := range sRes.Transactions {
+			fmt.Printf("- [%s] %s -> %s: %d FastCoins\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
+		}
+		fmt.Println("==========================")
+	} else {
+		fmt.Printf("sys@root> Statement error: %s\n", res.Error)
+	}
 }
 
 func (w *WalletApp) balance() {
