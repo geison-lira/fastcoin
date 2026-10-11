@@ -1,4 +1,4 @@
-package modules
+package components
 
 type BalanceRequest struct {
 	Address string `json:"address"`

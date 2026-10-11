@@ -1,4 +1,4 @@
-package modules
+package components
 
 type RPCRequest struct {
 	Method string `json:"method"`

@@ -1,4 +1,4 @@
-package modules
+package components
 
 type StatementRequest struct {
 	Address string `json:"address"`
