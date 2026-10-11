@@ -146,6 +146,7 @@ func (w *WalletApp) transaction(usrInputSlice []string) {
 	res, err := rpc.send(req)
 	if err != nil {
 		fmt.Printf("sys@root> Error in network: %v\n", err)
+		return
 	}
 	if res.Success {
 		fmt.Printf("sys@root> Transaction broadcasted, TxId: %s\n", tx.Id)
