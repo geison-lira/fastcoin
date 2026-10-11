@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -162,9 +163,22 @@ func (w *WalletApp) statement() {
 }
 
 func (w *WalletApp) balance() {
-	//
-	fmt.Println("- Fetching balance...")
-	//
+	bReq := BalanceRequest{Address: w.Address}
+	req := RPCRequest{Method: "get_bl", Params: bReq}
+	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
+	res, err := rpc.Send(req)
+	if err != nil {
+		fmt.Printf("sys@root> Error in network: %v\n", err)
+		return
+	}
+	if res.Success {
+		bytes, _ := json.Marshal(res.Data)
+		var bRes BalanceResponse
+		json.Unmarshal(bytes, &bRes)
+		fmt.Printf("sys@root> Current balance: %d FastCoins\n", bRes.Balance)
+	} else {
+		fmt.Printf("sys@root> Balance error: %s\n", res.Error)
+	}
 }
 
 func (w *WalletApp) help() {
