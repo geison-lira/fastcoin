@@ -24,9 +24,9 @@ type WalletApp struct {
 func (w *WalletApp) Enter(keysPath string) {
 	fmt.Println("sys@root> Launching wallet...")
 	if !utils.FileExists(keysPath) {
-		w.walletCreate(keysPath)
+		w.create(keysPath)
 	} else {
-		w.walletLoad(keysPath)
+		w.load(keysPath)
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
@@ -47,25 +47,25 @@ func (w *WalletApp) Enter(keysPath string) {
 		switch usrInputSlice[0] {
 		case "tx":
 			if len(usrInputSlice) == 3 {
-				w.transactionSend(usrInputSlice[1:])
+				w.transaction(usrInputSlice[1:])
 			} else {
 				w.commandError()
 			}
 		case "st":
 			if len(usrInputSlice) == 1 {
-				w.statementCheck()
+				w.statement()
 			} else {
 				w.commandError()
 			}
 		case "bl":
 			if len(usrInputSlice) == 1 {
-				w.balanceCheck()
+				w.balance()
 			} else {
 				w.commandError()
 			}
 		case "h":
 			if len(usrInputSlice) == 1 {
-				w.helpView()
+				w.help()
 			} else {
 				w.commandError()
 			}
@@ -75,7 +75,7 @@ func (w *WalletApp) Enter(keysPath string) {
 	}
 }
 
-func (w *WalletApp) walletCreate(keysPath string) {
+func (w *WalletApp) create(keysPath string) {
 	fmt.Printf("sys@root> No keys found, generate new ones? [y/n]: ")
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
@@ -112,7 +112,7 @@ func (w *WalletApp) walletCreate(keysPath string) {
 	}
 }
 
-func (w *WalletApp) walletLoad(keysPath string) {
+func (w *WalletApp) load(keysPath string) {
 	fmt.Println("sys@root> Keys found, loading wallet...")
 	var err error
 	w.PrivKey, w.PubKey, err = handlers.KeysLoad(keysPath)
@@ -124,7 +124,7 @@ func (w *WalletApp) walletLoad(keysPath string) {
 	fmt.Println("sys@root> Welcome back to your wallet, type a command and it's parameters (type h for help).")
 }
 
-func (w *WalletApp) transactionSend(usrInputSlice []string) {
+func (w *WalletApp) transaction(usrInputSlice []string) {
 	ammount, err := strconv.ParseInt(usrInputSlice[0], 10, 64)
 	if err != nil || ammount <= 0 {
 		fmt.Println("sys@root> Error in transaction, invalid ammount.")
@@ -143,19 +143,19 @@ func (w *WalletApp) transactionSend(usrInputSlice []string) {
 	//send tx via rpc
 }
 
-func (w *WalletApp) statementCheck() {
+func (w *WalletApp) statement() {
 	//
 	fmt.Println("- Fetching statement...")
 	//
 }
 
-func (w *WalletApp) balanceCheck() {
+func (w *WalletApp) balance() {
 	//
 	fmt.Println("- Fetching balance...")
 	//
 }
 
-func (w *WalletApp) helpView() {
+func (w *WalletApp) help() {
 	fmt.Println("     Command     |            Structure            ")
 	fmt.Println("Send Currency    |  tx <ammount> <recipient_pubKey>")
 	fmt.Println("Check Statement  |  st                             ")
