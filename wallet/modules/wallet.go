@@ -3,8 +3,11 @@ package modules
 import (
 	"bufio"
 	"crypto/ecdsa"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"wallet/handlers"
 	"wallet/utils"
@@ -122,9 +125,22 @@ func (w *WalletApp) walletLoad(keysPath string) {
 }
 
 func (w *WalletApp) transactionSend(usrInputSlice []string) {
-	//
-	fmt.Println("- Sending transaction...")
-	//
+	ammount, err := strconv.ParseInt(usrInputSlice[0], 10, 64)
+	if err != nil || ammount <= 0 {
+		fmt.Println("sys@root> Error in transaction, invalid ammount.")
+		return
+	}
+	recipient := usrInputSlice[1]
+	w.Nonce++
+	tx := Transaction{Sender: w.Address, Recipient: recipient, Ammount: ammount, Nonce: w.Nonce}
+	tx.Id = tx.Hash()
+	signBytes, err := ecdsa.SignASN1(rand.Reader, w.PrivKey, []byte(tx.Id))
+	if err != nil {
+		fmt.Printf("sys@root> Error signing transaction: %v\n", err)
+		return
+	}
+	tx.Signature = hex.EncodeToString(signBytes)
+	//send tx via rpc
 }
 
 func (w *WalletApp) statementCheck() {
