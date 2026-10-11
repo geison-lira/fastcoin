@@ -24,7 +24,7 @@ type RPCConnection struct {
 	TimeOut time.Duration
 }
 
-func (r *RPCConnection) send(req RPCRequest) (*RPCResponse, error) {
+func (r *RPCConnection) Send(req RPCRequest) (*RPCResponse, error) {
 	conn, err := net.DialTimeout(r.Type, r.Address, r.TimeOut)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to connect to the network at %s: %w", r.Address, err)

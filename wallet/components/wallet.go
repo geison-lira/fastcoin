@@ -143,7 +143,7 @@ func (w *WalletApp) transaction(usrInputSlice []string) {
 	tx.Signature = hex.EncodeToString(signBytes)
 	req := RPCRequest{Method: "set_tx", Params: tx}
 	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
-	res, err := rpc.send(req)
+	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("sys@root> Error in network: %v\n", err)
 		return
