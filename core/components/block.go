@@ -1,7 +1,7 @@
 package components
 
 type Block struct {
-	Id            int64         `json:"Id"`
+	Id            int64         `json:"id"`
 	Timestamp     int64         `json:"timestamp"`
 	Transactions  []Transaction `json:"transactions"`
 	PrevHash      string        `json:"prevhash"`
