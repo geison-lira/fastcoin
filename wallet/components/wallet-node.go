@@ -176,7 +176,7 @@ func (w *WalletApp) statement() {
 		var sRes StatementResponse
 		json.Unmarshal(bytes, &sRes)
 		fmt.Println("[SUCCESS] Statement Fetching Successful")
-		fmt.Printf("Wallet:\n%s\nBalance\n%d FST\n", w.WalletAddress, sRes.Balance)
+		fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, sRes.Balance)
 		fmt.Println("Transactions:")
 		for _, tx := range sRes.Transactions {
 			fmt.Printf("(%s) %s -> %s: %d FST\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
@@ -200,7 +200,7 @@ func (w *WalletApp) balance() {
 		var bRes BalanceResponse
 		json.Unmarshal(bytes, &bRes)
 		fmt.Println("[SUCCESS] Balance Fetching Successful")
-		fmt.Printf("Wallet:\n%s\nBalance\n%d FST\n", w.WalletAddress, bRes.Balance)
+		fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, bRes.Balance)
 	} else {
 		fmt.Printf("[ERROR] Balance Fetching Error: core-%s\n", res.Error)
 	}
