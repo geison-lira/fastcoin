@@ -1,10 +1,10 @@
 package components
 
 type BalanceRequest struct {
-	Address string `json:"address"`
+	WalletAddress string `json:"address"`
 }
 
 type BalanceResponse struct {
-	Address string `json:"address"`
-	Balance int64  `json:"balance"`
+	WalletAddress string `json:"address"`
+	Balance       int64  `json:"balance"`
 }

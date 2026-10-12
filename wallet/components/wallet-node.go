@@ -16,11 +16,11 @@ import (
 )
 
 type WalletApp struct {
-	PrivKey     *ecdsa.PrivateKey
-	PubKey      *ecdsa.PublicKey
-	Address     string
-	CoreAddress string
-	Nonce       int64
+	PrivKey       *ecdsa.PrivateKey
+	PubKey        *ecdsa.PublicKey
+	WalletAddress string
+	CoreAddress   string
+	Nonce         int64
 }
 
 func (w *WalletApp) Enter(keysPath string) {
@@ -32,7 +32,7 @@ func (w *WalletApp) Enter(keysPath string) {
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Printf("sys@%s...> ", w.Address[:8])
+		fmt.Printf("sys@%s...> ", w.WalletAddress[:8])
 		if !scanner.Scan() {
 			if err := scanner.Err(); err != nil {
 				fmt.Printf("sys@root> Error reading input: %v\n", err)
@@ -102,7 +102,7 @@ func (w *WalletApp) create(keysPath string) {
 			fmt.Printf("sys@root> Error storing keys: %v\n", err)
 			os.Exit(1)
 		}
-		w.Address, err = handlers.AddressGenerate(w.PubKey)
+		w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
 		if err != nil {
 			fmt.Printf("sys@root> Error generating address: %v\n", err)
 			os.Exit(1)
@@ -122,7 +122,7 @@ func (w *WalletApp) load(keysPath string) {
 		fmt.Printf("sys@root> Error loading keys: %v\n", err)
 		os.Exit(1)
 	}
-	w.Address, err = handlers.AddressGenerate(w.PubKey)
+	w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
 	fmt.Println("sys@root> Welcome back to your wallet, type a command and it's parameters (type h for help).")
 }
 
@@ -134,7 +134,7 @@ func (w *WalletApp) transaction(usrInputSlice []string) {
 	}
 	recipient := usrInputSlice[1]
 	w.Nonce++
-	tx := Transaction{Sender: w.Address, Recipient: recipient, Ammount: ammount, Nonce: w.Nonce}
+	tx := Transaction{Sender: w.WalletAddress, Recipient: recipient, Ammount: ammount, Nonce: w.Nonce}
 	tx.Id = tx.Hash()
 	signBytes, err := ecdsa.SignASN1(rand.Reader, w.PrivKey, []byte(tx.Id))
 	if err != nil {
@@ -143,7 +143,7 @@ func (w *WalletApp) transaction(usrInputSlice []string) {
 	}
 	tx.Signature = hex.EncodeToString(signBytes)
 	req := RPCRequest{Method: "set_tx", Params: tx}
-	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
+	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("sys@root> Error in network: %v\n", err)
@@ -157,9 +157,9 @@ func (w *WalletApp) transaction(usrInputSlice []string) {
 }
 
 func (w *WalletApp) statement() {
-	sReq := StatementRequest{Address: w.Address}
+	sReq := StatementRequest{WalletAddress: w.WalletAddress}
 	req := RPCRequest{Method: "get_st", Params: sReq}
-	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
+	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("sys@root> Error in network: %v\n", err)
@@ -169,7 +169,7 @@ func (w *WalletApp) statement() {
 		bytes, _ := json.Marshal(res.Data)
 		var sRes StatementResponse
 		json.Unmarshal(bytes, &sRes)
-		fmt.Printf("===Statement for %s===\n", w.Address)
+		fmt.Printf("===Statement for %s===\n", w.WalletAddress)
 		fmt.Printf("Balance: %d Fastcoins\n", sRes.Balance)
 		fmt.Println("Transactions:")
 		for _, tx := range sRes.Transactions {
@@ -182,9 +182,9 @@ func (w *WalletApp) statement() {
 }
 
 func (w *WalletApp) balance() {
-	bReq := BalanceRequest{Address: w.Address}
+	bReq := BalanceRequest{WalletAddress: w.WalletAddress}
 	req := RPCRequest{Method: "get_bl", Params: bReq}
-	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
+	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("sys@root> Error in network: %v\n", err)

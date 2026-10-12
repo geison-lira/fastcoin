@@ -19,15 +19,15 @@ type RPCResponse struct {
 }
 
 type RPCConnection struct {
-	Type    string
-	Address string
-	TimeOut time.Duration
+	Type        string
+	Destination string
+	TimeOut     time.Duration
 }
 
 func (r *RPCConnection) Send(req RPCRequest) (*RPCResponse, error) {
-	conn, err := net.DialTimeout(r.Type, r.Address, r.TimeOut)
+	conn, err := net.DialTimeout(r.Type, r.Destination, r.TimeOut)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to connect to the network at %s: %w", r.Address, err)
+		return nil, fmt.Errorf("Unable to connect to the network at %s: %w", r.Destination, err)
 	}
 	defer conn.Close()
 	if err := json.NewEncoder(conn).Encode(req); err != nil {
