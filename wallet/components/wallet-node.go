@@ -78,7 +78,7 @@ func (w *WalletApp) Enter(keysPath string) {
 }
 
 func (w *WalletApp) create(keysPath string) {
-	fmt.Printf("[INFO] No keys found, generate new ones? [y/n]")
+	fmt.Println("[INFO] No keys found, generate new ones? [y/n]")
 	fmt.Printf("fastcoin@root> ")
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
