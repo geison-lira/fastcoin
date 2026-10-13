@@ -14,7 +14,8 @@ func Run(keys string, node string) error {
 		wallet := newWalletNode("127.0.0.1:9000", time.Now().UnixNano())
 		err = wallet.Enter(keys)
 	case "core", "c":
-		fmt.Println("Core node.")
+		core := newCoreNode("127.0.0.1:9000")
+		err = core.Enter(keys)
 	default:
 		fmt.Println("[FATAL] Unknown Node Error: appinit-invalid node type")
 		err = errors.New("invalid node type")
@@ -24,4 +25,8 @@ func Run(keys string, node string) error {
 
 func newWalletNode(coreAddress string, nonce int64) *components.WalletNode {
 	return &components.WalletNode{CoreAddress: coreAddress, Nonce: nonce}
+}
+
+func newCoreNode(coreAddress string) *components.CoreNode {
+	return &components.CoreNode{CoreAddress: coreAddress}
 }
