@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	node := flag.String("node", "wallet", "full or wallet node choice.")
+	node := flag.String("node", "wallet", "core or wallet node choice.")
 	keys := flag.String("keys", "keys.pem", "public and private keys file path.")
 	flag.Parse()
 	err := app.Run(*keys, *node)

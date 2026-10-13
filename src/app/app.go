@@ -13,8 +13,8 @@ func Run(keys string, node string) error {
 	case "wallet", "w":
 		wallet := &components.WalletNode{CoreAddress: "127.0.0.1:9000", Nonce: time.Now().UnixNano()}
 		err = wallet.Enter(keys)
-	case "full", "f":
-		fmt.Println("Full mode.")
+	case "core", "c":
+		fmt.Println("Core node.")
 	default:
 		fmt.Println("[FATAL] Unknown Node Error: invalid node type")
 		err = errors.New("invalid node type")
