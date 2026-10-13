@@ -11,7 +11,7 @@ func Run(keys string, node string) error {
 	var err error
 	switch node {
 	case "wallet", "w":
-		wallet := &components.WalletNode{CoreAddress: "127.0.0.1:9000", Nonce: time.Now().UnixNano()}
+		wallet := newWalletNode("127.0.0.1:9000", time.Now().UnixNano())
 		err = wallet.Enter(keys)
 	case "core", "c":
 		fmt.Println("Core node.")
@@ -20,4 +20,8 @@ func Run(keys string, node string) error {
 		err = errors.New("invalid node type")
 	}
 	return err
+}
+
+func newWalletNode(coreAddress string, nonce int64) *components.WalletNode {
+	return &components.WalletNode{CoreAddress: coreAddress, Nonce: nonce}
 }
