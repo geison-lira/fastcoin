@@ -3,21 +3,16 @@ package main
 import (
 	"fastcoin/src/app"
 	"flag"
-	"fmt"
+	"os"
 )
 
 func main() {
-	node := flag.String("node", "wallet", "FastCoin node type choice.")
-	keys := flag.String("keys", "keys.pem", "public and private keys file location.")
+	node := flag.String("node", "wallet", "full or wallet node choice.")
+	keys := flag.String("keys", "keys.pem", "public and private keys file path.")
 	flag.Parse()
-	switch *node {
-	case "wallet", "w":
-		fmt.Println("Wallet mode.")
-	case "full", "f":
-		fmt.Println("Full mode.")
-	default:
-		fmt.Println("Unknown mode.")
+	err := app.Run(*keys, *node)
+	if err != nil {
+		os.Exit(1)
 	}
-
-	app.Run(*keys)
+	os.Exit(0)
 }
