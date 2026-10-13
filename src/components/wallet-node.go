@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type WalletApp struct {
+type WalletNode struct {
 	PrivKey       *ecdsa.PrivateKey
 	PubKey        *ecdsa.PublicKey
 	WalletAddress string
@@ -23,7 +23,7 @@ type WalletApp struct {
 	Nonce         int64
 }
 
-func (w *WalletApp) Enter(keysPath string) error {
+func (w *WalletNode) Enter(keysPath string) error {
 	var err error
 	fmt.Println("[INFO] Launching wallet...")
 	if !utils.FileExists(keysPath) {
@@ -91,7 +91,7 @@ func (w *WalletApp) Enter(keysPath string) error {
 	}
 }
 
-func (w *WalletApp) create(keysPath string) error {
+func (w *WalletNode) create(keysPath string) error {
 	var err error
 	fmt.Println("[INFO] No keys found, generate new ones? [y/n]")
 	fmt.Printf("fastcoin@root> ")
@@ -128,7 +128,7 @@ func (w *WalletApp) create(keysPath string) error {
 	return err
 }
 
-func (w *WalletApp) load(keysPath string) error {
+func (w *WalletNode) load(keysPath string) error {
 	var err error
 	fmt.Println("[INFO] Keys found, loading wallet...")
 	w.PrivKey, w.PubKey, err = handlers.KeysLoad(keysPath)
@@ -145,7 +145,7 @@ func (w *WalletApp) load(keysPath string) error {
 	return err
 }
 
-func (w *WalletApp) transaction(usrInputSlice []string) {
+func (w *WalletNode) transaction(usrInputSlice []string) {
 	ammount, err := strconv.ParseInt(usrInputSlice[0], 10, 64)
 	if err != nil {
 		fmt.Printf("[ERROR] Transaction Parsing Error: %v\n", err)
@@ -180,7 +180,7 @@ func (w *WalletApp) transaction(usrInputSlice []string) {
 	fmt.Printf("TxId: %s\n", tx.Id)
 }
 
-func (w *WalletApp) statement() {
+func (w *WalletNode) statement() {
 	sReq := StatementRequest{WalletAddress: w.WalletAddress}
 	req := RPCRequest{Method: "get_st", Params: sReq}
 	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
@@ -204,7 +204,7 @@ func (w *WalletApp) statement() {
 	}
 }
 
-func (w *WalletApp) balance() {
+func (w *WalletNode) balance() {
 	bReq := BalanceRequest{WalletAddress: w.WalletAddress}
 	req := RPCRequest{Method: "get_bl", Params: bReq}
 	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
@@ -224,7 +224,7 @@ func (w *WalletApp) balance() {
 	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, bRes.Balance)
 }
 
-func (w *WalletApp) help() {
+func (w *WalletNode) help() {
 	fmt.Println("      Command      |            Structure            ")
 	fmt.Println("Send Currency      |  tx <ammount> <recipient_pubKey>")
 	fmt.Println("Check Statement    |  st                             ")
