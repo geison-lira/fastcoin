@@ -23,20 +23,28 @@ type WalletApp struct {
 	Nonce         int64
 }
 
-func (w *WalletApp) Enter(keysPath string) {
+func (w *WalletApp) Enter(keysPath string) error {
+	var err error
 	fmt.Println("[INFO] Launching wallet...")
 	if !utils.FileExists(keysPath) {
-		w.create(keysPath)
+		err = w.create(keysPath)
+		if err != nil {
+			return err
+		}
 	} else {
-		w.load(keysPath)
+		err = w.load(keysPath)
+		if err != nil {
+			return err
+		}
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Printf("fastcoin@%s...> ", w.WalletAddress[:8])
 		if !scanner.Scan() {
-			if err := scanner.Err(); err != nil {
+			err = scanner.Err()
+			if err != nil {
 				fmt.Printf("[FATAL] Input Read Error: %v\n", err)
-				os.Exit(1)
+				return err
 			} else {
 				fmt.Println("[INFO] Closing wallet...")
 				os.Exit(0)
@@ -77,14 +85,15 @@ func (w *WalletApp) Enter(keysPath string) {
 	}
 }
 
-func (w *WalletApp) create(keysPath string) {
+func (w *WalletApp) create(keysPath string) error {
+	var err error
 	fmt.Println("[INFO] No keys found, generate new ones? [y/n]")
 	fmt.Printf("fastcoin@root> ")
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
-		if err := scanner.Err(); err != nil {
+		if err = scanner.Err(); err != nil {
 			fmt.Printf("[FATAL] Input Read Error: %v\n", err)
-			os.Exit(1)
+			return err
 		} else {
 			fmt.Println("[INFO] Closing wallet...")
 			os.Exit(0)
@@ -92,39 +101,44 @@ func (w *WalletApp) create(keysPath string) {
 	}
 	usrInputSlice := strings.Fields(scanner.Text())
 	if strings.EqualFold(usrInputSlice[0], "y") {
-		var err error
 		w.PrivKey, w.PubKey, err = handlers.KeysGenerate()
 		if err != nil {
 			fmt.Printf("[FATAL] Key Generation Error: %v\n", err)
-			os.Exit(1)
+			return err
 		}
 		err = handlers.KeysStore(keysPath, w.PrivKey, w.PubKey)
 		if err != nil {
 			fmt.Printf("[FATAL] Key Storage Error: %v\n", err)
-			os.Exit(1)
+			return err
 		}
 		w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
 		if err != nil {
 			fmt.Printf("[FATAL] Address Generation Error: %v\n", err)
-			os.Exit(1)
+			return err
 		}
 		fmt.Println("[INFO] Welcome to your new FastCoin wallet, your wallet was successfully created and your keys are stored in keys.pem.")
 	} else {
 		fmt.Println("[INFO] Closing wallet...")
 		os.Exit(0)
 	}
+	return err
 }
 
-func (w *WalletApp) load(keysPath string) {
-	fmt.Println("[INFO] Keys found, loading wallet...")
+func (w *WalletApp) load(keysPath string) error {
 	var err error
+	fmt.Println("[INFO] Keys found, loading wallet...")
 	w.PrivKey, w.PubKey, err = handlers.KeysLoad(keysPath)
 	if err != nil {
 		fmt.Printf("[FATAL] Key Load Error %v\n", err)
-		os.Exit(1)
+		return err
 	}
 	w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
+	if err != nil {
+		fmt.Printf("[FATAL] Address Generation Error: %v\n", err)
+		return err
+	}
 	fmt.Println("[INFO] Welcome back to your wallet, type a command and it's parameters (type h for help).")
+	return err
 }
 
 func (w *WalletApp) transaction(usrInputSlice []string) {
