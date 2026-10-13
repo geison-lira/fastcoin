@@ -45,10 +45,9 @@ func (w *WalletApp) Enter(keysPath string) error {
 			if err != nil {
 				fmt.Printf("[FATAL] Input Read Error: %v\n", err)
 				return err
-			} else {
-				fmt.Println("[INFO] Closing wallet...")
-				os.Exit(0)
 			}
+			fmt.Println("[INFO] Closing wallet...")
+			os.Exit(0)
 		}
 		usrInputSlice := strings.Fields(scanner.Text())
 		if len(usrInputSlice) == 0 {
@@ -101,33 +100,31 @@ func (w *WalletApp) create(keysPath string) error {
 		if err = scanner.Err(); err != nil {
 			fmt.Printf("[FATAL] Input Read Error: %v\n", err)
 			return err
-		} else {
-			fmt.Println("[INFO] Closing wallet...")
-			os.Exit(0)
 		}
-	}
-	usrInputSlice := strings.Fields(scanner.Text())
-	if strings.EqualFold(usrInputSlice[0], "y") {
-		w.PrivKey, w.PubKey, err = handlers.KeysGenerate()
-		if err != nil {
-			fmt.Printf("[FATAL] Key Generation Error: %v\n", err)
-			return err
-		}
-		err = handlers.KeysStore(keysPath, w.PrivKey, w.PubKey)
-		if err != nil {
-			fmt.Printf("[FATAL] Key Storage Error: %v\n", err)
-			return err
-		}
-		w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
-		if err != nil {
-			fmt.Printf("[FATAL] Address Generation Error: %v\n", err)
-			return err
-		}
-		fmt.Println("[INFO] Welcome to your new FastCoin wallet, your wallet was successfully created and your keys are stored in keys.pem.")
-	} else {
 		fmt.Println("[INFO] Closing wallet...")
 		os.Exit(0)
 	}
+	usrInputSlice := strings.Fields(scanner.Text())
+	if !strings.EqualFold(usrInputSlice[0], "y") {
+		fmt.Println("[INFO] Closing wallet...")
+		os.Exit(0)
+	}
+	w.PrivKey, w.PubKey, err = handlers.KeysGenerate()
+	if err != nil {
+		fmt.Printf("[FATAL] Key Generation Error: %v\n", err)
+		return err
+	}
+	err = handlers.KeysStore(keysPath, w.PrivKey, w.PubKey)
+	if err != nil {
+		fmt.Printf("[FATAL] Key Storage Error: %v\n", err)
+		return err
+	}
+	w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
+	if err != nil {
+		fmt.Printf("[FATAL] Address Generation Error: %v\n", err)
+		return err
+	}
+	fmt.Println("[INFO] Welcome to your new FastCoin wallet, your wallet was successfully created and your keys are stored in keys.pem.")
 	return err
 }
 
@@ -175,12 +172,12 @@ func (w *WalletApp) transaction(usrInputSlice []string) {
 		fmt.Printf("[ERROR] Network Connection Error: %v\n", err)
 		return
 	}
-	if res.Success {
-		fmt.Println("[SUCCESS] Transaction Broadcast Successful")
-		fmt.Printf("TxId: %s\n", tx.Id)
-	} else {
+	if !res.Success {
 		fmt.Printf("[ERROR] Transaction Broadcast Error: core-%s\n", res.Error)
+		return
 	}
+	fmt.Println("[SUCCESS] Transaction Broadcast Successful")
+	fmt.Printf("TxId: %s\n", tx.Id)
 }
 
 func (w *WalletApp) statement() {
@@ -192,18 +189,18 @@ func (w *WalletApp) statement() {
 		fmt.Printf("[ERROR] Network Connection Error: %v\n", err)
 		return
 	}
-	if res.Success {
-		bytes, _ := json.Marshal(res.Data)
-		var sRes StatementResponse
-		json.Unmarshal(bytes, &sRes)
-		fmt.Println("[SUCCESS] Statement Fetching Successful")
-		fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, sRes.Balance)
-		fmt.Println("Transactions:")
-		for _, tx := range sRes.Transactions {
-			fmt.Printf("(%s) %s -> %s: %d FST\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
-		}
-	} else {
+	if !res.Success {
 		fmt.Printf("[ERROR] Statement Fetching Error: core-%s\n", res.Error)
+		return
+	}
+	bytes, _ := json.Marshal(res.Data)
+	var sRes StatementResponse
+	json.Unmarshal(bytes, &sRes)
+	fmt.Println("[SUCCESS] Statement Fetching Successful")
+	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, sRes.Balance)
+	fmt.Println("Transactions:")
+	for _, tx := range sRes.Transactions {
+		fmt.Printf("(%s) %s -> %s: %d FST\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
 	}
 }
 
@@ -216,15 +213,15 @@ func (w *WalletApp) balance() {
 		fmt.Printf("[ERROR] Network Connection Error: %v\n", err)
 		return
 	}
-	if res.Success {
-		bytes, _ := json.Marshal(res.Data)
-		var bRes BalanceResponse
-		json.Unmarshal(bytes, &bRes)
-		fmt.Println("[SUCCESS] Balance Fetching Successful")
-		fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, bRes.Balance)
-	} else {
+	if !res.Success {
 		fmt.Printf("[ERROR] Balance Fetching Error: core-%s\n", res.Error)
+		return
 	}
+	bytes, _ := json.Marshal(res.Data)
+	var bRes BalanceResponse
+	json.Unmarshal(bytes, &bRes)
+	fmt.Println("[SUCCESS] Balance Fetching Successful")
+	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, bRes.Balance)
 }
 
 func (w *WalletApp) help() {
