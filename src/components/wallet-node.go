@@ -181,8 +181,8 @@ func (w *WalletNode) transaction(usrInputSlice []string) {
 }
 
 func (w *WalletNode) statement() {
-	sReq := StatementRequest{WalletAddress: w.WalletAddress}
-	req := RPCRequest{Method: "get_st", Params: sReq}
+	stReq := StatementRequest{WalletAddress: w.WalletAddress}
+	req := RPCRequest{Method: "get_st", Params: stReq}
 	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
@@ -194,19 +194,19 @@ func (w *WalletNode) statement() {
 		return
 	}
 	bytes, _ := json.Marshal(res.Data)
-	var sRes StatementResponse
-	json.Unmarshal(bytes, &sRes)
+	var stRes StatementResponse
+	json.Unmarshal(bytes, &stRes)
 	fmt.Println("[SUCCESS] Statement Fetching Successful")
-	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, sRes.Balance)
+	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, stRes.Balance)
 	fmt.Println("Transactions:")
-	for _, tx := range sRes.Transactions {
+	for _, tx := range stRes.Transactions {
 		fmt.Printf("(%s) %s -> %s: %d FST\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
 	}
 }
 
 func (w *WalletNode) balance() {
-	bReq := BalanceRequest{WalletAddress: w.WalletAddress}
-	req := RPCRequest{Method: "get_bl", Params: bReq}
+	blReq := BalanceRequest{WalletAddress: w.WalletAddress}
+	req := RPCRequest{Method: "get_bl", Params: blReq}
 	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
@@ -218,10 +218,10 @@ func (w *WalletNode) balance() {
 		return
 	}
 	bytes, _ := json.Marshal(res.Data)
-	var bRes BalanceResponse
-	json.Unmarshal(bytes, &bRes)
+	var blRes BalanceResponse
+	json.Unmarshal(bytes, &blRes)
 	fmt.Println("[SUCCESS] Balance Fetching Successful")
-	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, bRes.Balance)
+	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, blRes.Balance)
 }
 
 func (w *WalletNode) help() {
