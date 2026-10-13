@@ -43,7 +43,7 @@ func (w *WalletNode) Enter(keysPath string) error {
 		if !scanner.Scan() {
 			err = scanner.Err()
 			if err != nil {
-				fmt.Printf("[FATAL] Input Read Error: %v\n", err)
+				fmt.Printf("[FATAL] Input Read Error: wallet-%v\n", err)
 				return err
 			}
 			fmt.Println("[INFO] Closing wallet...")
@@ -58,35 +58,35 @@ func (w *WalletNode) Enter(keysPath string) error {
 			if len(usrInputSlice) == 3 {
 				w.transaction(usrInputSlice[1:])
 			} else {
-				fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
+				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 			}
 		case "st":
 			if len(usrInputSlice) == 1 {
 				w.statement()
 			} else {
-				fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
+				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 			}
 		case "bl":
 			if len(usrInputSlice) == 1 {
 				w.balance()
 			} else {
-				fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
+				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 			}
 		case "h":
 			if len(usrInputSlice) == 1 {
 				w.help()
 			} else {
-				fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
+				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 			}
 		case "q":
 			if len(usrInputSlice) == 1 {
 				fmt.Println("[INFO] Exiting wallet...")
 				return err
 			} else {
-				fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
+				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 			}
 		default:
-			fmt.Println("[ERROR] Command Typing Error: unknown command (type h for help).")
+			fmt.Println("[ERROR] Command Typing Error: wallet-unknown command (type h for help).")
 		}
 	}
 }
@@ -98,7 +98,7 @@ func (w *WalletNode) create(keysPath string) error {
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
 		if err = scanner.Err(); err != nil {
-			fmt.Printf("[FATAL] Input Read Error: %v\n", err)
+			fmt.Printf("[FATAL] Input Read Error: wallet-%v\n", err)
 			return err
 		}
 		fmt.Println("[INFO] Closing wallet...")
@@ -111,17 +111,17 @@ func (w *WalletNode) create(keysPath string) error {
 	}
 	w.PrivKey, w.PubKey, err = handlers.KeysGenerate()
 	if err != nil {
-		fmt.Printf("[FATAL] Key Generation Error: %v\n", err)
+		fmt.Printf("[FATAL] Key Generation Error: wallet-%v\n", err)
 		return err
 	}
 	err = handlers.KeysStore(keysPath, w.PrivKey, w.PubKey)
 	if err != nil {
-		fmt.Printf("[FATAL] Key Storage Error: %v\n", err)
+		fmt.Printf("[FATAL] Key Storage Error: wallet-%v\n", err)
 		return err
 	}
 	w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
 	if err != nil {
-		fmt.Printf("[FATAL] Address Generation Error: %v\n", err)
+		fmt.Printf("[FATAL] Address Generation Error: wallet-%v\n", err)
 		return err
 	}
 	fmt.Println("[INFO] Welcome to your new FastCoin wallet, your wallet was successfully created and your keys are stored in keys.pem.")
@@ -133,12 +133,12 @@ func (w *WalletNode) load(keysPath string) error {
 	fmt.Println("[INFO] Keys found, loading wallet...")
 	w.PrivKey, w.PubKey, err = handlers.KeysLoad(keysPath)
 	if err != nil {
-		fmt.Printf("[FATAL] Key Load Error %v\n", err)
+		fmt.Printf("[FATAL] Key Load Error wallet-%v\n", err)
 		return err
 	}
 	w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
 	if err != nil {
-		fmt.Printf("[FATAL] Address Generation Error: %v\n", err)
+		fmt.Printf("[FATAL] Address Generation Error: wallet-%v\n", err)
 		return err
 	}
 	fmt.Println("[INFO] Welcome back to your wallet, type a command and it's parameters (type h for help).")
@@ -148,11 +148,11 @@ func (w *WalletNode) load(keysPath string) error {
 func (w *WalletNode) transaction(usrInputSlice []string) {
 	ammount, err := strconv.ParseInt(usrInputSlice[0], 10, 64)
 	if err != nil {
-		fmt.Printf("[ERROR] Transaction Parsing Error: %v\n", err)
+		fmt.Printf("[ERROR] Transaction Parsing Error: wallet-%v\n", err)
 		return
 	}
 	if ammount <= 0 {
-		fmt.Println("[ERROR] Transaction Ammount Error: invalid ammount")
+		fmt.Println("[ERROR] Transaction Ammount Error: wallet-invalid ammount")
 		return
 	}
 	recipient := usrInputSlice[1]
@@ -161,7 +161,7 @@ func (w *WalletNode) transaction(usrInputSlice []string) {
 	tx.Id = tx.Hash()
 	signBytes, err := ecdsa.SignASN1(rand.Reader, w.PrivKey, []byte(tx.Id))
 	if err != nil {
-		fmt.Printf("[ERROR] Transaction Signing Error: %v\n", err)
+		fmt.Printf("[ERROR] Transaction Signing Error: wallet-%v\n", err)
 		return
 	}
 	tx.Signature = hex.EncodeToString(signBytes)
@@ -169,7 +169,7 @@ func (w *WalletNode) transaction(usrInputSlice []string) {
 	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: %v\n", err)
+		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
 		return
 	}
 	if !res.Success {
@@ -186,7 +186,7 @@ func (w *WalletNode) statement() {
 	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: %v\n", err)
+		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
 		return
 	}
 	if !res.Success {
@@ -210,7 +210,7 @@ func (w *WalletNode) balance() {
 	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: %v\n", err)
+		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
 		return
 	}
 	if !res.Success {

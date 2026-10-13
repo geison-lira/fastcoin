@@ -27,7 +27,7 @@ type RPCConnection struct {
 func (r *RPCConnection) Send(req RPCRequest) (*RPCResponse, error) {
 	conn, err := net.DialTimeout(r.Type, r.Destination, r.TimeOut)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to connect to the network at %s: %w", r.Destination, err)
+		return nil, fmt.Errorf("unable to connect to the network at %s: %w", r.Destination, err)
 	}
 	defer conn.Close()
 	if err := json.NewEncoder(conn).Encode(req); err != nil {

@@ -16,7 +16,7 @@ func Run(keys string, node string) error {
 	case "core", "c":
 		fmt.Println("Core node.")
 	default:
-		fmt.Println("[FATAL] Unknown Node Error: invalid node type")
+		fmt.Println("[FATAL] Unknown Node Error: appinit-invalid node type")
 		err = errors.New("invalid node type")
 	}
 	return err
