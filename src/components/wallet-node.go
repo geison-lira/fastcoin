@@ -39,7 +39,7 @@ func (w *WalletNode) Enter(keys string) error {
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Printf("fastcoin@%s...> ", w.WalletAddress[:8])
+		fmt.Printf("fastcoin-wallet@%s...> ", w.WalletAddress[:8])
 		if !scanner.Scan() {
 			err = scanner.Err()
 			if err != nil {
@@ -94,7 +94,7 @@ func (w *WalletNode) Enter(keys string) error {
 func (w *WalletNode) create(keys string) error {
 	var err error
 	fmt.Println("[INFO] No keys found, generate new ones? [y/n]")
-	fmt.Printf("fastcoin@root> ")
+	fmt.Printf("fastcoin-wallet@root> ")
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
 		if err = scanner.Err(); err != nil {
