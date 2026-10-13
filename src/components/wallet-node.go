@@ -6,13 +6,13 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"fastcoin/src/handlers"
+	"fastcoin/src/utils"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-	"src/handlers"
-	"src/utils"
 )
 
 type WalletApp struct {

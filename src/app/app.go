@@ -1,8 +1,8 @@
 package app
 
 import (
+	"fastcoin/src/components"
 	"time"
-	"src/components"
 )
 
 func Run(keysPath string) {

@@ -1,6 +1,6 @@
 package main
 
-import "src/app"
+import "fastcoin/src/app"
 
 const keysPath = "keys.pem"
 
