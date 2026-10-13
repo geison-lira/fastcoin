@@ -1,6 +1,6 @@
 package main
 
-import "wallet/app"
+import "src/app"
 
 const keysPath = "keys.pem"
 

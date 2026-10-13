@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"wallet/handlers"
-	"wallet/utils"
+	"src/handlers"
+	"src/utils"
 )
 
 type WalletApp struct {

@@ -1,3 +1,3 @@
-module wallet
+module src
 
 go 1.26.5

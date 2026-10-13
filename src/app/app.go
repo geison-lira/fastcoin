@@ -2,7 +2,7 @@ package app
 
 import (
 	"time"
-	"wallet/components"
+	"src/components"
 )
 
 func Run(keysPath string) {
