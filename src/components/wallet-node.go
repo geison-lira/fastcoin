@@ -23,16 +23,16 @@ type WalletNode struct {
 	Nonce         int64
 }
 
-func (w *WalletNode) Enter(keysPath string) error {
+func (w *WalletNode) Enter(keys string) error {
 	var err error
 	fmt.Println("[INFO] Launching wallet...")
-	if !utils.FileExists(keysPath) {
-		err = w.create(keysPath)
+	if !utils.FileExists(keys) {
+		err = w.create(keys)
 		if err != nil {
 			return err
 		}
 	} else {
-		err = w.load(keysPath)
+		err = w.load(keys)
 		if err != nil {
 			return err
 		}
@@ -91,7 +91,7 @@ func (w *WalletNode) Enter(keysPath string) error {
 	}
 }
 
-func (w *WalletNode) create(keysPath string) error {
+func (w *WalletNode) create(keys string) error {
 	var err error
 	fmt.Println("[INFO] No keys found, generate new ones? [y/n]")
 	fmt.Printf("fastcoin@root> ")
@@ -114,7 +114,7 @@ func (w *WalletNode) create(keysPath string) error {
 		fmt.Printf("[FATAL] Key Generation Error: wallet-%v\n", err)
 		return err
 	}
-	err = handlers.KeysStore(keysPath, w.PrivKey, w.PubKey)
+	err = handlers.KeysStore(keys, w.PrivKey, w.PubKey)
 	if err != nil {
 		fmt.Printf("[FATAL] Key Storage Error: wallet-%v\n", err)
 		return err
@@ -128,10 +128,10 @@ func (w *WalletNode) create(keysPath string) error {
 	return err
 }
 
-func (w *WalletNode) load(keysPath string) error {
+func (w *WalletNode) load(keys string) error {
 	var err error
 	fmt.Println("[INFO] Keys found, loading wallet...")
-	w.PrivKey, w.PubKey, err = handlers.KeysLoad(keysPath)
+	w.PrivKey, w.PubKey, err = handlers.KeysLoad(keys)
 	if err != nil {
 		fmt.Printf("[FATAL] Key Load Error wallet-%v\n", err)
 		return err

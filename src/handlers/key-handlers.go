@@ -19,7 +19,7 @@ func KeysGenerate() (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
 	return privKey, pubKey, nil
 }
 
-func KeysStore(keysPath string, privKey *ecdsa.PrivateKey, pubKey *ecdsa.PublicKey) error {
+func KeysStore(keys string, privKey *ecdsa.PrivateKey, pubKey *ecdsa.PublicKey) error {
 	privBytes, err := x509.MarshalECPrivateKey(privKey)
 	if err != nil {
 		return err
@@ -28,7 +28,7 @@ func KeysStore(keysPath string, privKey *ecdsa.PrivateKey, pubKey *ecdsa.PublicK
 	if err != nil {
 		return err
 	}
-	file, err := os.OpenFile(keysPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	file, err := os.OpenFile(keys, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
 	}
@@ -50,8 +50,8 @@ func KeysStore(keysPath string, privKey *ecdsa.PrivateKey, pubKey *ecdsa.PublicK
 	return nil
 }
 
-func KeysLoad(keysPath string) (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
-	data, err := os.ReadFile(keysPath)
+func KeysLoad(keys string) (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
+	data, err := os.ReadFile(keys)
 	if err != nil {
 		return nil, nil, err
 	}
