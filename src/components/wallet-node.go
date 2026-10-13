@@ -59,28 +59,28 @@ func (w *WalletApp) Enter(keysPath string) error {
 			if len(usrInputSlice) == 3 {
 				w.transaction(usrInputSlice[1:])
 			} else {
-				w.commandStructureError()
+				fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
 			}
 		case "st":
 			if len(usrInputSlice) == 1 {
 				w.statement()
 			} else {
-				w.commandStructureError()
+				fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
 			}
 		case "bl":
 			if len(usrInputSlice) == 1 {
 				w.balance()
 			} else {
-				w.commandStructureError()
+				fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
 			}
 		case "h":
 			if len(usrInputSlice) == 1 {
 				w.help()
 			} else {
-				w.commandStructureError()
+				fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
 			}
 		default:
-			w.commandUnknownError()
+			fmt.Println("[ERROR] Command Typing Error: unknown command (type h for help).")
 		}
 	}
 }
@@ -226,12 +226,4 @@ func (w *WalletApp) help() {
 	fmt.Println("Check Statement  |  st                             ")
 	fmt.Println("Check Balance    |  bl                             ")
 	fmt.Println("Help             |  h                              ")
-}
-
-func (w *WalletApp) commandStructureError() {
-	fmt.Println("[ERROR] Command Typing Error: wrong command syntax (type h for help).")
-}
-
-func (w *WalletApp) commandUnknownError() {
-	fmt.Println("[ERROR] Command Typing Error: unknown command (type h for help).")
 }
