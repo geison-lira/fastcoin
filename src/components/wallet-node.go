@@ -49,37 +49,37 @@ func (w *WalletNode) Enter(keys string) error {
 			fmt.Println("[INFO] Closing wallet...")
 			os.Exit(0)
 		}
-		usrInputSlice := strings.Fields(scanner.Text())
-		if len(usrInputSlice) == 0 {
+		usrInput := strings.Fields(scanner.Text())
+		if len(usrInput) == 0 {
 			continue
 		}
-		switch usrInputSlice[0] {
+		switch usrInput[0] {
 		case "tx":
-			if len(usrInputSlice) == 3 {
-				w.transaction(usrInputSlice[1:])
+			if len(usrInput) == 3 {
+				w.transaction(usrInput[1:])
 			} else {
 				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 			}
 		case "st":
-			if len(usrInputSlice) == 1 {
+			if len(usrInput) == 1 {
 				w.statement()
 			} else {
 				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 			}
 		case "bl":
-			if len(usrInputSlice) == 1 {
+			if len(usrInput) == 1 {
 				w.balance()
 			} else {
 				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 			}
 		case "h":
-			if len(usrInputSlice) == 1 {
+			if len(usrInput) == 1 {
 				w.help()
 			} else {
 				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 			}
 		case "q":
-			if len(usrInputSlice) == 1 {
+			if len(usrInput) == 1 {
 				fmt.Println("[INFO] Exiting wallet...")
 				return err
 			} else {
@@ -104,8 +104,8 @@ func (w *WalletNode) create(keys string) error {
 		fmt.Println("[INFO] Closing wallet...")
 		os.Exit(0)
 	}
-	usrInputSlice := strings.Fields(scanner.Text())
-	if !strings.EqualFold(usrInputSlice[0], "y") {
+	usrInput := strings.Fields(scanner.Text())
+	if !strings.EqualFold(usrInput[0], "y") {
 		fmt.Println("[INFO] Closing wallet...")
 		os.Exit(0)
 	}
@@ -145,8 +145,8 @@ func (w *WalletNode) load(keys string) error {
 	return err
 }
 
-func (w *WalletNode) transaction(usrInputSlice []string) {
-	ammount, err := strconv.ParseInt(usrInputSlice[0], 10, 64)
+func (w *WalletNode) transaction(usrInput []string) {
+	ammount, err := strconv.ParseInt(usrInput[0], 10, 64)
 	if err != nil {
 		fmt.Printf("[ERROR] Transaction Parsing Error: wallet-%v\n", err)
 		return
@@ -155,7 +155,7 @@ func (w *WalletNode) transaction(usrInputSlice []string) {
 		fmt.Println("[ERROR] Transaction Ammount Error: wallet-invalid ammount")
 		return
 	}
-	recipient := usrInputSlice[1]
+	recipient := usrInput[1]
 	w.Nonce++
 	tx := Transaction{Sender: w.WalletAddress, Recipient: recipient, Ammount: ammount, Nonce: w.Nonce}
 	tx.Id = tx.Hash()
