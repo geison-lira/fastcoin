@@ -27,16 +27,16 @@ func (c *CoreNode) Enter(keys string) error {
 		fmt.Printf("[FATAL] Keys Inexistence Error: core-%v\n", err)
 		return err
 	}
-	err = c.load(keys)
+	err = c.create(keys)
 	if err != nil {
 		return err
 	}
 }
 
-func (c *CoreNode) load(keys string) error {
+func (c *CoreNode) create(keys string) error {
 	var err error
 	var pubKey *ecdsa.PublicKey
-	fmt.Println("[INFO] Keys found, loading core...")
+	fmt.Println("[INFO] Keys found, creating core...")
 	_, pubKey, err = handlers.KeysLoad(keys)
 	if err != nil {
 		fmt.Printf("[FATAL] Key Load Error: core-%v\n", err)
