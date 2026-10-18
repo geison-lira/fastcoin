@@ -59,6 +59,15 @@ func (c *CoreNode) Enter(keys string) error {
 			} else {
 				fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
 			}
+		case "q":
+			if len(usrInput) == 1 {
+				fmt.Println("[INFO] Exiting core...")
+				return err
+			} else {
+				fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
+			}
+		default:
+			fmt.Println("[ERROR] Command Typing Error: core-unknown command (type h for help).")
 		}
 	}
 }
@@ -81,4 +90,10 @@ func (c *CoreNode) create(keys string) error {
 	c.Peers = make([]string, 0)
 	fmt.Println("[INFO] Welcome to core node, type a command and it's parameters (type h for help).")
 	return err
+}
+
+func (c *CoreNode) help() {
+	fmt.Println("      Command      |            Structure            ")
+	fmt.Println("Command List Help  |  h                              ")
+	fmt.Println("Quit Program       |  q                              ")
 }
