@@ -11,6 +11,8 @@ import (
 	"sync"
 )
 
+const difficulty = 3
+
 type CoreNode struct {
 	Blockchain    *Blockchain
 	Peers         []string
@@ -70,6 +72,7 @@ func (c *CoreNode) create(keys string) error {
 		fmt.Printf("[FATAL] Address Generation Error: core-%v\n", err)
 		return err
 	}
+	c.Blockchain.blockchainGenerate(difficulty)
 	c.Peers = make([]string, 0)
 	fmt.Println("[INFO] Welcome to your new FastCoin core node, the associated wallet was successfully created and the keys are stored in keys.pem.")
 	return err
