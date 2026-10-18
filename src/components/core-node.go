@@ -1,11 +1,14 @@
 package components
 
 import (
+	"bufio"
 	"crypto/ecdsa"
 	"errors"
 	"fastcoin/src/handlers"
 	"fastcoin/src/utils"
 	"fmt"
+	"os"
+	"strings"
 	"sync"
 )
 
@@ -30,6 +33,33 @@ func (c *CoreNode) Enter(keys string) error {
 	err = c.create(keys)
 	if err != nil {
 		return err
+	}
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+		fmt.Printf("fastcoin-core@%s...> ", c.WalletAddress[:8])
+		if !scanner.Scan() {
+			err = scanner.Err()
+			if err != nil {
+				fmt.Printf("[FATAL] Input Read Error: core-%v\n", err)
+				return err
+			}
+			fmt.Println("[INFO] Closing core...")
+			os.Exit(0)
+		}
+		usrInput := strings.Fields(scanner.Text())
+		if len(usrInput) == 0 {
+			continue
+		}
+		switch usrInput[0] {
+		case "mn":
+			//mine
+		case "h":
+			if len(usrInput) == 1 {
+				c.help()
+			} else {
+				fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
+			}
+		}
 	}
 }
 
