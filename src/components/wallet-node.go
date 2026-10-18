@@ -133,7 +133,7 @@ func (w *WalletNode) load(keys string) error {
 	fmt.Println("[INFO] Keys found, loading wallet...")
 	w.PrivKey, w.PubKey, err = handlers.KeysLoad(keys)
 	if err != nil {
-		fmt.Printf("[FATAL] Key Load Error wallet-%v\n", err)
+		fmt.Printf("[FATAL] Key Load Error: wallet-%v\n", err)
 		return err
 	}
 	w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
