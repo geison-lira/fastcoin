@@ -13,7 +13,7 @@ type Blockchain struct {
 	mu         sync.RWMutex
 }
 
-func (bc *Blockchain) blockchainGenerate(difficulty int) *Blockchain {
+func (bc *Blockchain) blockchainGenerate(difficulty int) {
 	bc.Blocks = make([]Block, 0)
 	bc.Mempool = make([]Transaction, 0)
 	bc.Balances = make(map[string]int64)
@@ -28,5 +28,4 @@ func (bc *Blockchain) blockchainGenerate(difficulty int) *Blockchain {
 	}
 	genesisBlock.hashCalculate()
 	bc.Blocks = append(bc.Blocks, genesisBlock)
-	return bc
 }
