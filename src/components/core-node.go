@@ -50,7 +50,6 @@ func (c *CoreNode) create(keys string) error {
 		fmt.Println("[INFO] Closing core...")
 		os.Exit(0)
 	}
-
 	usrInput := strings.Fields(scanner.Text())
 	if !strings.EqualFold(usrInput[0], "y") {
 		fmt.Println("[INFO] Closing core...")
