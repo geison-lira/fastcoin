@@ -71,6 +71,7 @@ func (c *CoreNode) create(keys string) error {
 		fmt.Printf("[FATAL] Address Generation Error: core-%v\n", err)
 		return err
 	}
+	c.Peers = make([]string, 0)
 	fmt.Println("[INFO] Welcome to your new FastCoin core node, the associated wallet was successfully created and the keys are stored in keys.pem.")
 	return err
 }
