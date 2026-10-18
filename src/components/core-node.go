@@ -49,6 +49,6 @@ func (c *CoreNode) load(keys string) error {
 	}
 	c.Blockchain.blockchainGenerate(difficulty)
 	c.Peers = make([]string, 0)
-	fmt.Println("[INFO] Welcome back to your wallet, type a command and it's parameters (type h for help).")
+	fmt.Println("[INFO] Welcome to core node, type a command and it's parameters (type h for help).")
 	return err
 }
