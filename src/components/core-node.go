@@ -52,7 +52,7 @@ func (c *CoreNode) Enter(keys string) error {
 		}
 		switch usrInput[0] {
 		case "mn":
-			//mine
+			fmt.Println("Mining sequence")
 		case "h":
 			if len(usrInput) == 1 {
 				c.help()
