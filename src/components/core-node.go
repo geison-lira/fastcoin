@@ -7,6 +7,7 @@ import (
 	"fastcoin/src/handlers"
 	"fastcoin/src/utils"
 	"fmt"
+	"net"
 	"os"
 	"strings"
 	"sync"
@@ -34,6 +35,13 @@ func (c *CoreNode) Enter(keys string) error {
 	if err != nil {
 		return err
 	}
+	listener, err := net.Listen("tcp", c.CoreAddress)
+	if err != nil {
+		fmt.Printf("[FATAL] Network Connection Error: core-%v\n", err)
+		return err
+	}
+	defer listener.Close()
+	fmt.Printf("[INFO] Core listening to %s...", c.CoreAddress)
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Printf("fastcoin-core@%s...> ", c.WalletAddress[:8])
@@ -86,7 +94,7 @@ func (c *CoreNode) create(keys string) error {
 		fmt.Printf("[FATAL] Address Generation Error: core-%v\n", err)
 		return err
 	}
-	c.Blockchain.blockchainGenerate(difficulty)
+	//blockchain handling
 	c.Peers = make([]string, 0)
 	fmt.Println("[INFO] Welcome to core node, type a command and it's parameters (type h for help).")
 	return err
