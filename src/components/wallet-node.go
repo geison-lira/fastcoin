@@ -166,7 +166,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 	}
 	tx.Signature = hex.EncodeToString(signBytes)
 	req := RPCRequest{Method: "set_tx", Params: tx}
-	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
+	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
@@ -183,7 +183,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 func (w *WalletNode) statement() {
 	stReq := StatementRequest{WalletAddress: w.WalletAddress}
 	req := RPCRequest{Method: "get_st", Params: stReq}
-	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
+	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
@@ -207,7 +207,7 @@ func (w *WalletNode) statement() {
 func (w *WalletNode) balance() {
 	blReq := BalanceRequest{WalletAddress: w.WalletAddress}
 	req := RPCRequest{Method: "get_bl", Params: blReq}
-	rpc := RPCConnection{Type: "tcp", Destination: w.CoreAddress, TimeOut: 3 * time.Second}
+	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
 	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
