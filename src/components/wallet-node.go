@@ -3,16 +3,11 @@ package components
 import (
 	"bufio"
 	"crypto/ecdsa"
-	"crypto/rand"
-	"encoding/hex"
-	"encoding/json"
 	"fastcoin/src/handlers"
 	"fastcoin/src/utils"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
-	"time"
 )
 
 type WalletNode struct {
@@ -53,40 +48,9 @@ func (w *WalletNode) Enter(keys string) error {
 		if len(usrInput) == 0 {
 			continue
 		}
-		switch usrInput[0] {
-		case "tx":
-			if len(usrInput) == 3 {
-				w.transaction(usrInput[1:])
-			} else {
-				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
-			}
-		case "st":
-			if len(usrInput) == 1 {
-				w.statement()
-			} else {
-				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
-			}
-		case "bl":
-			if len(usrInput) == 1 {
-				w.balance()
-			} else {
-				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
-			}
-		case "h":
-			if len(usrInput) == 1 {
-				w.help()
-			} else {
-				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
-			}
-		case "q":
-			if len(usrInput) == 1 {
-				fmt.Println("[INFO] Exiting wallet...")
-				return err
-			} else {
-				fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
-			}
-		default:
-			fmt.Println("[ERROR] Command Typing Error: wallet-unknown command (type h for help).")
+		exit := w.control(usrInput)
+		if exit {
+			return err
 		}
 	}
 }
@@ -143,92 +107,4 @@ func (w *WalletNode) load(keys string) error {
 	}
 	fmt.Println("[INFO] Welcome back to your wallet, type a command and it's parameters (type h for help).")
 	return err
-}
-
-func (w *WalletNode) transaction(usrInput []string) {
-	ammount, err := strconv.ParseInt(usrInput[0], 10, 64)
-	if err != nil {
-		fmt.Printf("[ERROR] Transaction Parsing Error: wallet-%v\n", err)
-		return
-	}
-	if ammount <= 0 {
-		fmt.Println("[ERROR] Transaction Ammount Error: wallet-invalid ammount")
-		return
-	}
-	recipient := usrInput[1]
-	w.Nonce++
-	tx := Transaction{Sender: w.WalletAddress, Recipient: recipient, Ammount: ammount, Nonce: w.Nonce}
-	tx.Id = tx.Hash()
-	signBytes, err := ecdsa.SignASN1(rand.Reader, w.PrivKey, []byte(tx.Id))
-	if err != nil {
-		fmt.Printf("[ERROR] Transaction Signing Error: wallet-%v\n", err)
-		return
-	}
-	tx.Signature = hex.EncodeToString(signBytes)
-	req := RPCRequest{Method: "set_tx", Params: tx}
-	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
-	res, err := rpc.Send(req)
-	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
-		return
-	}
-	if !res.Success {
-		fmt.Printf("[ERROR] Transaction Broadcast Error: core-%s\n", res.Error)
-		return
-	}
-	fmt.Println("[SUCCESS] Transaction Broadcast Successful")
-	fmt.Printf("TxId: %s\n", tx.Id)
-}
-
-func (w *WalletNode) statement() {
-	stReq := StatementRequest{WalletAddress: w.WalletAddress}
-	req := RPCRequest{Method: "get_st", Params: stReq}
-	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
-	res, err := rpc.Send(req)
-	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
-		return
-	}
-	if !res.Success {
-		fmt.Printf("[ERROR] Statement Fetching Error: core-%s\n", res.Error)
-		return
-	}
-	bytes, _ := json.Marshal(res.Data)
-	var stRes StatementResponse
-	json.Unmarshal(bytes, &stRes)
-	fmt.Println("[SUCCESS] Statement Fetching Successful")
-	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, stRes.Balance)
-	fmt.Println("Transactions:")
-	for _, tx := range stRes.Transactions {
-		fmt.Printf("(%s) %s -> %s: %d FST\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
-	}
-}
-
-func (w *WalletNode) balance() {
-	blReq := BalanceRequest{WalletAddress: w.WalletAddress}
-	req := RPCRequest{Method: "get_bl", Params: blReq}
-	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
-	res, err := rpc.Send(req)
-	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
-		return
-	}
-	if !res.Success {
-		fmt.Printf("[ERROR] Balance Fetching Error: core-%s\n", res.Error)
-		return
-	}
-	bytes, _ := json.Marshal(res.Data)
-	var blRes BalanceResponse
-	json.Unmarshal(bytes, &blRes)
-	fmt.Println("[SUCCESS] Balance Fetching Successful")
-	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, blRes.Balance)
-}
-
-func (w *WalletNode) help() {
-	fmt.Println("      Command      |            Structure            ")
-	fmt.Println("Send Currency      |  tx <ammount> <recipient_pubKey>")
-	fmt.Println("Check Statement    |  st                             ")
-	fmt.Println("Check Balance      |  bl                             ")
-	fmt.Println("Command List Help  |  h                              ")
-	fmt.Println("Quit Program       |  q                              ")
 }
