@@ -3,12 +3,10 @@ package components
 import (
 	"bufio"
 	"crypto/ecdsa"
-	"encoding/json"
 	"errors"
 	"fastcoin/src/handlers"
 	"fastcoin/src/utils"
 	"fmt"
-	"net"
 	"os"
 	"strings"
 	"sync"
@@ -99,43 +97,14 @@ func (c *CoreNode) create(keys string) error {
 }
 
 func (c *CoreNode) listen() error {
-	listener, err := net.Listen("tcp", c.CoreAddress)
+	rpc := RPCConnection{Type: "tcp", Address: c.CoreAddress}
+	listener, err := rpc.Listen()
 	if err != nil {
-		fmt.Printf("[FATAL] Network Connection Error: core-%v\n", err)
+		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
 		return err
 	}
-	defer listener.Close()
-	fmt.Printf("[INFO] Core listening to %s...", c.CoreAddress)
-	go c.connection(listener)
+	go rpc.Receive(listener)
 	return nil
-}
-
-func (c *CoreNode) connection(listener net.Listener) {
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			continue
-		}
-		defer conn.Close()
-		var req RPCRequest
-		var res RPCResponse
-		if err := json.NewDecoder(conn).Decode(&req); err != nil {
-			return
-		}
-		switch req.Method {
-		case "set_tx":
-			var tx Transaction
-			bytes, _ := json.Marshal(req.Params)
-			json.Unmarshal(bytes, &tx)
-			err := SetTransaction()
-			if err != nil {
-				res = RPCResponse{Success: false, Error: err.Error()}
-			} else {
-				res = RPCResponse{Success: true}
-			}
-		}
-		json.NewEncoder(conn).Encode(res)
-	}
 }
 
 func (c *CoreNode) help() {
