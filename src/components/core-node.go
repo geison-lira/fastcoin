@@ -54,24 +54,9 @@ func (c *CoreNode) Enter(keys string) error {
 		if len(usrInput) == 0 {
 			continue
 		}
-		switch usrInput[0] {
-		case "mn":
-			fmt.Println("Mining sequence")
-		case "h":
-			if len(usrInput) == 1 {
-				c.help()
-			} else {
-				fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
-			}
-		case "q":
-			if len(usrInput) == 1 {
-				fmt.Println("[INFO] Exiting core...")
-				return err
-			} else {
-				fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
-			}
-		default:
-			fmt.Println("[ERROR] Command Typing Error: core-unknown command (type h for help).")
+		exit := c.control(usrInput)
+		if exit {
+			return err
 		}
 	}
 }
@@ -105,10 +90,4 @@ func (c *CoreNode) listen() error {
 	}
 	go rpc.Receive(listener)
 	return nil
-}
-
-func (c *CoreNode) help() {
-	fmt.Println("      Command      |            Structure            ")
-	fmt.Println("Command List Help  |  h                              ")
-	fmt.Println("Quit Program       |  q                              ")
 }
