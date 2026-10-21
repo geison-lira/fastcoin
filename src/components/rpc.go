@@ -105,5 +105,3 @@ func (r *RPCConnection) Receive(listener net.Listener, listenerChannel chan erro
 		}
 	}
 }
-
-//maybe implement some channel to the goroutine to signal error or termination or something
