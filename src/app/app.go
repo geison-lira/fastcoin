@@ -32,7 +32,17 @@ func Run(keys string, node string) error {
 		}
 		err = wallet.Enter(keys)
 	case "core":
-		core := newCoreNode("127.0.0.1:9000")
+		var core *components.CoreNode
+		fmt.Println("[INFO] Launching core...")
+		if !utils.FileExists(keys) {
+			err = errors.New("missing miner wallet keys")
+			fmt.Printf("[FATAL] Keys Inexistence Error: core-%v\n", err)
+			break
+		}
+		core, err = newCoreNode("127.0.0.1:9000", keys)
+		if err != nil {
+			break
+		}
 		err = core.Enter(keys)
 	default:
 		fmt.Println("[FATAL] Unknown Node Error: appinit-invalid node type")
@@ -101,6 +111,23 @@ func loadWalletNode(coreAddress string, keys string) (*components.WalletNode, er
 	return &components.WalletNode{PrivKey: privKey, PubKey: pubKey, WalletAddress: walletAddress, CoreAddress: coreAddress, Nonce: nonce}, err
 }
 
-func newCoreNode(coreAddress string) *components.CoreNode {
-	return &components.CoreNode{CoreAddress: coreAddress}
+func newCoreNode(coreAddress string, keys string) (*components.CoreNode, error) {
+	var err error
+	var pubKey *ecdsa.PublicKey
+	fmt.Println("[INFO] Keys found, creating core...")
+	_, pubKey, err = handlers.KeysLoad(keys)
+	if err != nil {
+		fmt.Printf("[FATAL] Key Load Error: core-%v\n", err)
+		return nil, err
+	}
+	walletAddress, err := handlers.AddressGenerate(pubKey)
+	if err != nil {
+		fmt.Printf("[FATAL] Address Generation Error: core-%v\n", err)
+		return nil, err
+	}
+	//blockchain handling
+	peers := make([]string, 0)
+	listenerChannel := make(chan error)
+	fmt.Println("[INFO] Welcome to core node, type a command and it's parameters (type h for help).")
+	return &components.CoreNode{Blockchain: /*blockchain handlers*/ nil, Peers: peers, CoreAddress: coreAddress, WalletAddress: walletAddress, ListenerChannel: listenerChannel}, err
 }
