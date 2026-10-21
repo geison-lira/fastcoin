@@ -3,7 +3,6 @@ package components
 import (
 	"crypto/ecdsa"
 	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -61,16 +60,18 @@ func (w *WalletNode) transaction(usrInput []string) {
 	}
 	recipient := usrInput[1]
 	w.Nonce++
-	tx := Transaction{Sender: w.WalletAddress, Recipient: recipient, Ammount: ammount, Nonce: w.Nonce}
-	tx.Id = tx.Hash()
+	var tx *Transaction
+	tx.NewTransaction(w.WalletAddress, recipient, ammount, w.Nonce)
 	signBytes, err := ecdsa.SignASN1(rand.Reader, w.PrivKey, []byte(tx.Id))
 	if err != nil {
 		fmt.Printf("[ERROR] Transaction Signing Error: wallet-%v\n", err)
 		return
 	}
-	tx.Signature = hex.EncodeToString(signBytes)
-	req := RPCRequest{Method: "set_tx", Params: tx}
-	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
+	tx.Sign(signBytes)
+	var req RPCRequest
+	req.NewRequest("set_tx", tx)
+	var rpc RPCConnection
+	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
@@ -85,9 +86,12 @@ func (w *WalletNode) transaction(usrInput []string) {
 }
 
 func (w *WalletNode) statement() {
-	stReq := StatementRequest{WalletAddress: w.WalletAddress}
-	req := RPCRequest{Method: "get_st", Params: stReq}
-	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
+	var stReq *StatementRequest
+	stReq.NewRequest(w.WalletAddress)
+	var req RPCRequest
+	req.NewRequest("get_st", stReq)
+	var rpc RPCConnection
+	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
@@ -101,7 +105,7 @@ func (w *WalletNode) statement() {
 	var stRes StatementResponse
 	json.Unmarshal(bytes, &stRes)
 	fmt.Println("[SUCCESS] Statement Fetching Successful")
-	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, stRes.Balance)
+	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", stRes.WalletAddress, stRes.Balance)
 	fmt.Println("Transactions:")
 	for _, tx := range stRes.Transactions {
 		fmt.Printf("(%s) %s -> %s: %d FST\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
@@ -109,9 +113,12 @@ func (w *WalletNode) statement() {
 }
 
 func (w *WalletNode) balance() {
-	blReq := BalanceRequest{WalletAddress: w.WalletAddress}
-	req := RPCRequest{Method: "get_bl", Params: blReq}
-	rpc := RPCConnection{Type: "tcp", Address: w.CoreAddress, TimeOut: 3 * time.Second}
+	var blReq *BalanceRequest
+	blReq.NewRequest(w.WalletAddress)
+	var req RPCRequest
+	req.NewRequest("get_bl", blReq)
+	var rpc RPCConnection
+	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	res, err := rpc.Send(req)
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
@@ -125,7 +132,7 @@ func (w *WalletNode) balance() {
 	var blRes BalanceResponse
 	json.Unmarshal(bytes, &blRes)
 	fmt.Println("[SUCCESS] Balance Fetching Successful")
-	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", w.WalletAddress, blRes.Balance)
+	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", blRes.WalletAddress, blRes.Balance)
 }
 
 func (w *WalletNode) help() {

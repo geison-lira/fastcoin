@@ -12,6 +12,11 @@ type RPCRequest struct {
 	Params any    `json:"params"`
 }
 
+func (r *RPCRequest) NewRequest(method string, params any) {
+	r.Method = method
+	r.Params = params
+}
+
 type RPCResponse struct {
 	Success bool   `json:"success"`
 	Data    any    `json:"data,omitempty"`
@@ -19,13 +24,19 @@ type RPCResponse struct {
 }
 
 type RPCConnection struct {
-	Type    string
-	Address string
-	TimeOut time.Duration
+	Protocol string
+	Address  string
+	TimeOut  time.Duration
+}
+
+func (r *RPCConnection) NewConnection(protocol string, address string, timeOut time.Duration) {
+	r.Protocol = protocol
+	r.Address = address
+	r.TimeOut = timeOut
 }
 
 func (r *RPCConnection) Send(req RPCRequest) (*RPCResponse, error) {
-	conn, err := net.DialTimeout(r.Type, r.Address, r.TimeOut)
+	conn, err := net.DialTimeout(r.Protocol, r.Address, r.TimeOut)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to the network at %s: %w", r.Address, err)
 	}
@@ -41,7 +52,7 @@ func (r *RPCConnection) Send(req RPCRequest) (*RPCResponse, error) {
 }
 
 func (r *RPCConnection) Listen() (net.Listener, error) {
-	listener, err := net.Listen(r.Type, r.Address)
+	listener, err := net.Listen(r.Protocol, r.Address)
 	if err != nil {
 		return nil, fmt.Errorf("unable to listen to the network at %s: %w", r.Address, err)
 	}
@@ -49,8 +60,8 @@ func (r *RPCConnection) Listen() (net.Listener, error) {
 	return listener, nil
 }
 
-func (r *RPCConnection) Receive(listener net.Listener, listenerChannel chan error) {
-	defer close(listenerChannel)
+func (r *RPCConnection) Receive(listener net.Listener, c *CoreNode) {
+	defer close(c.ListenerChannel)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -59,7 +70,7 @@ func (r *RPCConnection) Receive(listener net.Listener, listenerChannel chan erro
 		defer conn.Close()
 		var req RPCRequest
 		if err := json.NewDecoder(conn).Decode(&req); err != nil {
-			listenerChannel <- err
+			c.ListenerChannel <- err
 			return
 		}
 		var res RPCResponse
@@ -100,7 +111,7 @@ func (r *RPCConnection) Receive(listener net.Listener, listenerChannel chan erro
 			res = RPCResponse{Success: false, Error: "unknown procedure"}
 		}
 		if err := json.NewEncoder(conn).Encode(res); err != nil {
-			listenerChannel <- err
+			c.ListenerChannel <- err
 			return
 		}
 	}
