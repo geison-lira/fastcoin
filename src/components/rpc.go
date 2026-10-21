@@ -61,9 +61,46 @@ func (r *RPCConnection) Receive(listener net.Listener) {
 			return
 		}
 		var res RPCResponse
-		// call the switch function
+		switch req.Method {
+		case "set_tx":
+			var tx Transaction
+			bytes, _ := json.Marshal(req.Params)
+			json.Unmarshal(bytes, &tx)
+			err := SubmitTransaction(tx)
+			if err != nil {
+				res = RPCResponse{Success: false, Error: err.Error()}
+			} else {
+				res = RPCResponse{Success: true}
+			}
+		case "get_st":
+			var stReq StatementRequest
+			bytes, _ := json.Marshal(req.Params)
+			json.Unmarshal(bytes, &stReq)
+			bl, txs, err := FetchStatement(stReq.WalletAddress)
+			stRes := StatementResponse{WalletAddress: stReq.WalletAddress, Balance: bl, Transactions: txs}
+			if err != nil {
+				res = RPCResponse{Success: false, Error: err.Error()}
+			} else {
+				res = RPCResponse{Success: true, Data: stRes}
+			}
+		case "get_bl":
+			var blReq BalanceRequest
+			bytes, _ := json.Marshal(req.Params)
+			json.Unmarshal(bytes, &blReq)
+			bl, err := FetchBalance(blReq.WalletAddress)
+			blRes := BalanceResponse{WalletAddress: blReq.WalletAddress, Balance: bl}
+			if err != nil {
+				res = RPCResponse{Success: false, Error: err.Error()}
+			} else {
+				res = RPCResponse{Success: true, Data: blRes}
+			}
+		default:
+			res = RPCResponse{Success: false, Error: "unknown procedure"}
+		}
 		if err := json.NewEncoder(conn).Encode(res); err != nil {
 			return
 		}
 	}
 }
+
+//maybe implement some channel to the goroutine to signal error or termination or something
