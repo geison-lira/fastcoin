@@ -15,11 +15,12 @@ import (
 const difficulty = 3
 
 type CoreNode struct {
-	Blockchain    *Blockchain
-	Peers         []string
-	CoreAddress   string
-	WalletAddress string
-	mu            sync.Mutex
+	Blockchain      *Blockchain
+	Peers           []string
+	CoreAddress     string
+	WalletAddress   string
+	ListenerChannel chan error
+	mu              sync.Mutex
 }
 
 func (c *CoreNode) Enter(keys string) error {
@@ -77,6 +78,7 @@ func (c *CoreNode) create(keys string) error {
 	}
 	//blockchain handling
 	c.Peers = make([]string, 0)
+	c.ListenerChannel = make(chan error)
 	fmt.Println("[INFO] Welcome to core node, type a command and it's parameters (type h for help).")
 	return err
 }
@@ -88,6 +90,6 @@ func (c *CoreNode) listen() error {
 		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
 		return err
 	}
-	go rpc.Receive(listener)
+	go rpc.Receive(listener, c.ListenerChannel)
 	return nil
 }

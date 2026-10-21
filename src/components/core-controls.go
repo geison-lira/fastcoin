@@ -4,6 +4,12 @@ import "fmt"
 
 func (c *CoreNode) control(usrInput []string) bool {
 	switch usrInput[0] {
+	case "status":
+		if len(usrInput) == 1 {
+			c.status()
+		} else {
+			fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
+		}
 	case "mn":
 		fmt.Println("Mining sequence")
 	case "h":
@@ -25,8 +31,18 @@ func (c *CoreNode) control(usrInput []string) bool {
 	return false
 }
 
+func (c *CoreNode) status() {
+	err := <-c.ListenerChannel
+	if err != nil {
+		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
+	} else {
+		fmt.Println("[SUCCESS] Core Successfully Listening")
+	}
+}
+
 func (c *CoreNode) help() {
 	fmt.Println("      Command      |            Structure            ")
+	fmt.Println("Listening Status   |  status                         ")
 	fmt.Println("Command List Help  |  h                              ")
 	fmt.Println("Quit Program       |  q                              ")
 }

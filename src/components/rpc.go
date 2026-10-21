@@ -49,7 +49,8 @@ func (r *RPCConnection) Listen() (net.Listener, error) {
 	return listener, nil
 }
 
-func (r *RPCConnection) Receive(listener net.Listener) {
+func (r *RPCConnection) Receive(listener net.Listener, listenerChannel chan error) {
+	defer close(listenerChannel)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -58,6 +59,7 @@ func (r *RPCConnection) Receive(listener net.Listener) {
 		defer conn.Close()
 		var req RPCRequest
 		if err := json.NewDecoder(conn).Decode(&req); err != nil {
+			listenerChannel <- err
 			return
 		}
 		var res RPCResponse
@@ -98,6 +100,7 @@ func (r *RPCConnection) Receive(listener net.Listener) {
 			res = RPCResponse{Success: false, Error: "unknown procedure"}
 		}
 		if err := json.NewEncoder(conn).Encode(res); err != nil {
+			listenerChannel <- err
 			return
 		}
 	}
