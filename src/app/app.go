@@ -10,10 +10,10 @@ import (
 func Run(keys string, node string) error {
 	var err error
 	switch node {
-	case "wallet", "w":
+	case "wallet":
 		wallet := newWalletNode("127.0.0.1:9000", time.Now().UnixNano())
 		err = wallet.Enter(keys)
-	case "core", "c":
+	case "core":
 		core := newCoreNode("127.0.0.1:9000")
 		err = core.Enter(keys)
 	default:
