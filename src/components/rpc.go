@@ -69,6 +69,7 @@ func (r *RPCConnection) Handle(errChan chan error) error {
 			if err != nil {
 				continue
 			}
+			defer conn.Close()
 			var req RPCRequest
 			if err := json.NewDecoder(conn).Decode(&req); err != nil {
 				errChan <- err
@@ -79,7 +80,6 @@ func (r *RPCConnection) Handle(errChan chan error) error {
 				errChan <- err
 				return
 			}
-			conn.Close()
 		}
 	}()
 	return err
