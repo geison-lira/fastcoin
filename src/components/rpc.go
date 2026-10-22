@@ -63,7 +63,7 @@ func (r *RPCConnection) Handle() error {
 		return fmt.Errorf("unable to listen to the network at %s: %w", r.Address, err)
 	}
 	defer listener.Close()
-	go func(listener net.Listener) {
+	go func() {
 		for {
 			conn, err := listener.Accept()
 			if err != nil {
@@ -79,6 +79,6 @@ func (r *RPCConnection) Handle() error {
 			}
 			conn.Close()
 		}
-	}(listener)
+	}()
 	return err
 }
