@@ -88,7 +88,13 @@ func newWalletNode(coreAddress string, keys string) (*components.WalletNode, err
 	}
 	nonce := time.Now().UnixNano()
 	fmt.Println("[INFO] Welcome to your new FastCoin wallet, your wallet was successfully created and your keys are stored in keys.pem.")
-	return &components.WalletNode{PrivKey: privKey, PubKey: pubKey, WalletAddress: walletAddress, CoreAddress: coreAddress, Nonce: nonce}, err
+	return &components.WalletNode{
+		PrivKey:       privKey,
+		PubKey:        pubKey,
+		WalletAddress: walletAddress,
+		CoreAddress:   coreAddress,
+		Nonce:         nonce,
+	}, err
 }
 
 func loadWalletNode(coreAddress string, keys string) (*components.WalletNode, error) {
@@ -108,7 +114,13 @@ func loadWalletNode(coreAddress string, keys string) (*components.WalletNode, er
 	}
 	nonce := time.Now().UnixNano()
 	fmt.Println("[INFO] Welcome back to your wallet, type a command and it's parameters (type h for help).")
-	return &components.WalletNode{PrivKey: privKey, PubKey: pubKey, WalletAddress: walletAddress, CoreAddress: coreAddress, Nonce: nonce}, err
+	return &components.WalletNode{
+		PrivKey:       privKey,
+		PubKey:        pubKey,
+		WalletAddress: walletAddress,
+		CoreAddress:   coreAddress,
+		Nonce:         nonce,
+	}, err
 }
 
 func newCoreNode(coreAddress string, keys string) (*components.CoreNode, error) {
@@ -129,5 +141,12 @@ func newCoreNode(coreAddress string, keys string) (*components.CoreNode, error) 
 	peers := make([]string, 0)
 	listenerChannel := make(chan error)
 	fmt.Println("[INFO] Welcome to core node, type a command and it's parameters (type h for help).")
-	return &components.CoreNode{Blockchain: /*blockchain handlers*/ nil, Peers: peers, CoreAddress: coreAddress, WalletAddress: walletAddress, ListenerChannel: listenerChannel, Listening: false}, err
+	return &components.CoreNode{
+		Blockchain:/*blockchain handlers*/ nil,
+		Peers:           peers,
+		CoreAddress:     coreAddress,
+		WalletAddress:   walletAddress,
+		ListenerChannel: listenerChannel,
+		Listening:       false,
+	}, err
 }
