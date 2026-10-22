@@ -11,13 +11,13 @@ import (
 const difficulty = 3
 
 type CoreNode struct {
-	Blockchain      *Blockchain
-	Peers           []string
-	CoreAddress     string
-	WalletAddress   string
-	ListenerChannel chan error
-	Listening       bool
-	mu              sync.Mutex
+	Blockchain    *Blockchain
+	Peers         []string
+	CoreAddress   string
+	WalletAddress string
+	ErrChan       chan error
+	Listening     bool
+	mu            sync.Mutex
 }
 
 func (c *CoreNode) Enter(keys string) error {
