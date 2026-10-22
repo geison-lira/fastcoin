@@ -47,7 +47,7 @@ func (c *CoreNode) listen() {
 	}
 	var rpc RPCConnection
 	rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
-	err := rpc.Handle()
+	err := rpc.Handle(c.ErrChan)
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
 		return
@@ -56,7 +56,7 @@ func (c *CoreNode) listen() {
 }
 
 func (c *CoreNode) status() {
-	//err := <-goroutine_channel
+	err := <-c.ErrChan
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
 	} else {

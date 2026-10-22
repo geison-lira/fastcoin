@@ -57,7 +57,7 @@ func (r *RPCConnection) Send(req RPCRequest) (*RPCResponse, error) {
 	return &res, nil
 }
 
-func (r *RPCConnection) Handle() error {
+func (r *RPCConnection) Handle(errChan chan error) error {
 	listener, err := net.Listen(r.Protocol, r.Address)
 	if err != nil {
 		return fmt.Errorf("unable to listen to the network at %s: %w", r.Address, err)
@@ -71,10 +71,12 @@ func (r *RPCConnection) Handle() error {
 			}
 			var req RPCRequest
 			if err := json.NewDecoder(conn).Decode(&req); err != nil {
+				errChan <- err
 				return
 			}
 			res := r.procedures(req)
 			if err := json.NewEncoder(conn).Encode(res); err != nil {
+				errChan <- err
 				return
 			}
 			conn.Close()
