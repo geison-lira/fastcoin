@@ -43,7 +43,7 @@ func (c *CoreNode) listen(usrInput []string) {
 		}
 		var rpc RPCConnection
 		rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
-		err := rpc.Handle(c.ListenErrChan)
+		err := rpc.Handle(c.ListenErrChan, c.ListenSigStop)
 		if err != nil {
 			fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
 			return
@@ -58,7 +58,13 @@ func (c *CoreNode) listen(usrInput []string) {
 		}
 		fmt.Println("[SUCCESS] Core Successfully Listening")
 	case "stop":
-
+		if !c.Listening {
+			fmt.Println("[ERROR] Network Connection Error: core-already not listening network")
+			return
+		}
+		c.ListenSigStop <- true
+		c.Listening = false
+		fmt.Println("[SUCCESS] Core Stopped Listening")
 	}
 }
 

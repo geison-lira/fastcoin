@@ -140,6 +140,7 @@ func newCoreNode(coreAddress string, keys string) (*components.CoreNode, error) 
 	//blockchain handling
 	peers := make([]string, 0)
 	listenErrChan := make(chan error)
+	listenSigStop := make(chan bool)
 	fmt.Println("[INFO] Welcome to core node, type a command and it's parameters (type h for help).")
 	return &components.CoreNode{
 		Blockchain:/*blockchain handlers*/ nil,
@@ -147,6 +148,7 @@ func newCoreNode(coreAddress string, keys string) (*components.CoreNode, error) 
 		CoreAddress:   coreAddress,
 		WalletAddress: walletAddress,
 		ListenErrChan: listenErrChan,
+		ListenSigStop: listenSigStop,
 		Listening:     false,
 	}, err
 }
