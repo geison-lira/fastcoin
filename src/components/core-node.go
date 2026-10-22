@@ -16,6 +16,7 @@ type CoreNode struct {
 	CoreAddress     string
 	WalletAddress   string
 	ListenerChannel chan error
+	Listening       bool
 	mu              sync.Mutex
 }
 

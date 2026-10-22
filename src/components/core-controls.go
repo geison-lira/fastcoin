@@ -41,12 +41,18 @@ func (c *CoreNode) control(usrInput []string) bool {
 }
 
 func (c *CoreNode) listen() {
+	if c.Listening {
+		fmt.Println("[ERROR] Network Connection Error: core-already listening network")
+		return
+	}
 	var rpc RPCConnection
 	rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
 	err := rpc.Handle()
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
+		return
 	}
+	c.Listening = true
 }
 
 func (c *CoreNode) status() {

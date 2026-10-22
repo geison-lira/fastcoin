@@ -129,5 +129,5 @@ func newCoreNode(coreAddress string, keys string) (*components.CoreNode, error) 
 	peers := make([]string, 0)
 	listenerChannel := make(chan error)
 	fmt.Println("[INFO] Welcome to core node, type a command and it's parameters (type h for help).")
-	return &components.CoreNode{Blockchain: /*blockchain handlers*/ nil, Peers: peers, CoreAddress: coreAddress, WalletAddress: walletAddress, ListenerChannel: listenerChannel}, err
+	return &components.CoreNode{Blockchain: /*blockchain handlers*/ nil, Peers: peers, CoreAddress: coreAddress, WalletAddress: walletAddress, ListenerChannel: listenerChannel, Listening: false}, err
 }
