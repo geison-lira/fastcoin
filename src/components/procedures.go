@@ -1,6 +1,9 @@
 package components
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+)
 
 func (r *RPCConnection) procedures(req RPCRequest) RPCResponse {
 	var res RPCResponse
@@ -38,7 +41,8 @@ func (r *RPCConnection) procedures(req RPCRequest) RPCResponse {
 			res.NewResponse(true, blRes, "")
 		}
 	default:
-		res = RPCResponse{Success: false, Error: "unknown procedure"}
+		err := errors.New("unknown procedure")
+		res.NewResponse(false, nil, err.Error())
 	}
 	return res
 }
