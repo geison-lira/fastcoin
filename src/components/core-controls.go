@@ -8,14 +8,8 @@ import (
 func (c *CoreNode) control(usrInput []string) bool {
 	switch usrInput[0] {
 	case "lt":
-		if len(usrInput) == 1 {
-			c.listen()
-		} else {
-			fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
-		}
-	case "status":
-		if len(usrInput) == 1 {
-			c.status()
+		if len(usrInput) == 2 {
+			c.listen(usrInput[1:])
 		} else {
 			fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
 		}
@@ -40,33 +34,37 @@ func (c *CoreNode) control(usrInput []string) bool {
 	return false
 }
 
-func (c *CoreNode) listen() {
-	if c.Listening {
-		fmt.Println("[ERROR] Network Connection Error: core-already listening network")
-		return
-	}
-	var rpc RPCConnection
-	rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
-	err := rpc.Handle(c.ErrChan)
-	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
-		return
-	}
-	c.Listening = true
-}
-
-func (c *CoreNode) status() {
-	err := <-c.ErrChan
-	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
-	} else {
+func (c *CoreNode) listen(usrInput []string) {
+	switch usrInput[0] {
+	case "start":
+		if c.Listening {
+			fmt.Println("[ERROR] Network Connection Error: core-already listening network")
+			return
+		}
+		var rpc RPCConnection
+		rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
+		err := rpc.Handle(c.ErrChan)
+		if err != nil {
+			fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
+			return
+		}
+		c.Listening = true
 		fmt.Println("[SUCCESS] Core Successfully Listening")
+	case "check":
+		err := <-c.ErrChan
+		if err != nil {
+			fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
+			return
+		}
+		fmt.Println("[SUCCESS] Core Successfully Listening")
+	case "stop":
+		//stop signal to goroutine
 	}
 }
 
 func (c *CoreNode) help() {
 	fmt.Println("      Command      |            Structure            ")
-	fmt.Println("Listening Status   |  status                         ")
+	fmt.Println("Start Listening    |  lt <mode: start, check, stop>  ")
 	fmt.Println("Command List Help  |  h                              ")
 	fmt.Println("Quit Program       |  q                              ")
 }
