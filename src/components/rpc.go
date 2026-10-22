@@ -69,7 +69,6 @@ func (r *RPCConnection) Handle() error {
 			if err != nil {
 				continue
 			}
-			defer conn.Close()
 			var req RPCRequest
 			if err := json.NewDecoder(conn).Decode(&req); err != nil {
 				return
@@ -78,6 +77,7 @@ func (r *RPCConnection) Handle() error {
 			if err := json.NewEncoder(conn).Encode(res); err != nil {
 				return
 			}
+			conn.Close()
 		}
 	}(listener)
 	return err
