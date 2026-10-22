@@ -15,7 +15,7 @@ type CoreNode struct {
 	Peers         []string
 	CoreAddress   string
 	WalletAddress string
-	ErrChan       chan error
+	ListenErrChan chan error
 	Listening     bool
 	mu            sync.Mutex
 }

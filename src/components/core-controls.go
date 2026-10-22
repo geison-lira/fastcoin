@@ -43,7 +43,7 @@ func (c *CoreNode) listen(usrInput []string) {
 		}
 		var rpc RPCConnection
 		rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
-		err := rpc.Handle(c.ErrChan)
+		err := rpc.Handle(c.ListenErrChan)
 		if err != nil {
 			fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
 			return
@@ -51,14 +51,14 @@ func (c *CoreNode) listen(usrInput []string) {
 		c.Listening = true
 		fmt.Println("[SUCCESS] Core Successfully Listening")
 	case "check":
-		err := <-c.ErrChan
+		err := <-c.ListenErrChan
 		if err != nil {
 			fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
 			return
 		}
 		fmt.Println("[SUCCESS] Core Successfully Listening")
 	case "stop":
-		//stop signal to goroutine
+
 	}
 }
 
