@@ -1,9 +1,18 @@
 package components
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func (c *CoreNode) control(usrInput []string) bool {
 	switch usrInput[0] {
+	case "lt":
+		if len(usrInput) == 1 {
+			c.listen()
+		} else {
+			fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
+		}
 	case "status":
 		if len(usrInput) == 1 {
 			c.status()
@@ -31,8 +40,17 @@ func (c *CoreNode) control(usrInput []string) bool {
 	return false
 }
 
+func (c *CoreNode) listen() {
+	var rpc RPCConnection
+	rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
+	err := rpc.Handle()
+	if err != nil {
+		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
+	}
+}
+
 func (c *CoreNode) status() {
-	err := <-c.ListenerChannel
+	//err := <-goroutine_channel
 	if err != nil {
 		fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
 	} else {
