@@ -51,12 +51,20 @@ func (c *CoreNode) listen(usrInput []string) {
 		c.Listening = true
 		fmt.Println("[SUCCESS] Core Successfully Listening")
 	case "check":
-		err := <-c.ListenErrChan
-		if err != nil {
-			fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
+		if !c.Listening {
+			fmt.Println("[INFO] Core is not listening")
 			return
 		}
-		fmt.Println("[SUCCESS] Core Successfully Listening")
+		select {
+		case err := <-c.ListenErrChan:
+			if err != nil {
+				c.Listening = false
+				fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
+				return
+			}
+		default:
+		}
+		fmt.Println("[INFO] Core is listening")
 	case "stop":
 		if !c.Listening {
 			fmt.Println("[ERROR] Network Connection Error: core-already not listening network")
