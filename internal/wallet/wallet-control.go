@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/rand"
 	"encoding/json"
+	"fastcoin/internal/rpc"
 	"fmt"
 	"strconv"
 	"time"
@@ -60,7 +61,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 	}
 	recipient := usrInput[1]
 	w.Nonce++
-	var tx Transaction
+	var tx rpc.Transaction
 	tx.NewTransaction(w.WalletAddress, recipient, ammount, w.Nonce)
 	signBytes, err := ecdsa.SignASN1(rand.Reader, w.PrivKey, []byte(tx.Id))
 	if err != nil {
@@ -68,9 +69,9 @@ func (w *WalletNode) transaction(usrInput []string) {
 		return
 	}
 	tx.Sign(signBytes)
-	var req RPCRequest
+	var req rpc.RPCRequest
 	req.NewRequest("set_tx", tx)
-	var rpc RPCConnection
+	var rpc rpc.RPCConnection
 	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	res, err := rpc.Send(req)
 	if err != nil {
@@ -86,11 +87,11 @@ func (w *WalletNode) transaction(usrInput []string) {
 }
 
 func (w *WalletNode) statement() {
-	var stReq StatementRequest
+	var stReq rpc.StatementRequest
 	stReq.NewRequest(w.WalletAddress)
-	var req RPCRequest
+	var req rpc.RPCRequest
 	req.NewRequest("get_st", stReq)
-	var rpc RPCConnection
+	var rpc rpc.RPCConnection
 	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	res, err := rpc.Send(req)
 	if err != nil {
@@ -102,7 +103,7 @@ func (w *WalletNode) statement() {
 		return
 	}
 	bytes, _ := json.Marshal(res.Data)
-	var stRes StatementResponse
+	var stRes rpc.StatementResponse
 	json.Unmarshal(bytes, &stRes)
 	fmt.Println("[SUCCESS] Statement Fetching Successful")
 	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", stRes.WalletAddress, stRes.Balance)
@@ -113,11 +114,11 @@ func (w *WalletNode) statement() {
 }
 
 func (w *WalletNode) balance() {
-	var blReq BalanceRequest
+	var blReq rpc.BalanceRequest
 	blReq.NewRequest(w.WalletAddress)
-	var req RPCRequest
+	var req rpc.RPCRequest
 	req.NewRequest("get_bl", blReq)
-	var rpc RPCConnection
+	var rpc rpc.RPCConnection
 	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	res, err := rpc.Send(req)
 	if err != nil {
@@ -129,7 +130,7 @@ func (w *WalletNode) balance() {
 		return
 	}
 	bytes, _ := json.Marshal(res.Data)
-	var blRes BalanceResponse
+	var blRes rpc.BalanceResponse
 	json.Unmarshal(bytes, &blRes)
 	fmt.Println("[SUCCESS] Balance Fetching Successful")
 	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", blRes.WalletAddress, blRes.Balance)

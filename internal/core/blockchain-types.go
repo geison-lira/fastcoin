@@ -1,10 +1,13 @@
 package core
 
-import "sync"
+import (
+	"fastcoin/internal/rpc"
+	"sync"
+)
 
 type Blockchain struct {
 	Blocks     []Block
-	Mempool    []Transaction
+	Mempool    []rpc.Transaction
 	Balances   map[string]int64
 	Difficulty int
 	mu         sync.RWMutex

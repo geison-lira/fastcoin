@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fastcoin/internal/rpc"
 	"fmt"
 	"time"
 )
@@ -41,7 +42,7 @@ func (c *CoreNode) listen(usrInput []string) {
 			fmt.Println("[ERROR] Network Connection Error: core-already listening network")
 			return
 		}
-		var rpc RPCConnection
+		var rpc rpc.RPCConnection
 		rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
 		err := rpc.Handle(c.ListenErrChan, c.ListenSigStop)
 		if err != nil {
