@@ -1,20 +1,11 @@
-package components
+package wallet
 
 import (
 	"bufio"
-	"crypto/ecdsa"
 	"fmt"
 	"os"
 	"strings"
 )
-
-type WalletNode struct {
-	PrivKey       *ecdsa.PrivateKey
-	PubKey        *ecdsa.PublicKey
-	WalletAddress string
-	CoreAddress   string
-	Nonce         int64
-}
 
 func (w *WalletNode) Enter(keys string) error {
 	var err error

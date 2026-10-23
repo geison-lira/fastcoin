@@ -1,4 +1,4 @@
-package components
+package wallet
 
 import (
 	"crypto/ecdsa"

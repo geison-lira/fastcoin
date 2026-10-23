@@ -1,19 +1,10 @@
-package components
+package transaction
 
 import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 )
-
-type Transaction struct {
-	Id        string `json:"id"`
-	Sender    string `json:"sender"`
-	Recipient string `json:"recipient"`
-	Ammount   int64  `json:"ammount"`
-	Nonce     int64  `json:"nonce"`
-	Signature string `json:"signature"`
-}
 
 func (t *Transaction) NewTransaction(sender string, recipient string, ammount int64, nonce int64) {
 	t.Sender = sender
@@ -22,6 +13,7 @@ func (t *Transaction) NewTransaction(sender string, recipient string, ammount in
 	t.Nonce = nonce
 	t.Id = t.hash()
 }
+
 func (t *Transaction) Sign(signBytes []byte) {
 	t.Signature = hex.EncodeToString(signBytes)
 }

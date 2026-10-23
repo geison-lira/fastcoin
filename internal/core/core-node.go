@@ -1,25 +1,11 @@
-package components
+package core
 
 import (
 	"bufio"
 	"fmt"
 	"os"
 	"strings"
-	"sync"
 )
-
-const difficulty = 3
-
-type CoreNode struct {
-	Blockchain    *Blockchain
-	Peers         []string
-	CoreAddress   string
-	WalletAddress string
-	ListenErrChan chan error
-	ListenSigStop chan bool
-	Listening     bool
-	mu            sync.Mutex
-}
 
 func (c *CoreNode) Enter(keys string) error {
 	var err error

@@ -1,17 +1,8 @@
-package components
+package core
 
 import (
-	"sync"
 	"time"
 )
-
-type Blockchain struct {
-	Blocks     []Block
-	Mempool    []Transaction
-	Balances   map[string]int64
-	Difficulty int
-	mu         sync.RWMutex
-}
 
 func (bc *Blockchain) blockchainGenerate(difficulty int) {
 	bc.Blocks = make([]Block, 0)

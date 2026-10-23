@@ -1,11 +1,7 @@
-package components
+package balance
 
 type BalanceRequest struct {
 	WalletAddress string `json:"address"`
-}
-
-func (r *BalanceRequest) NewRequest(walletAddress string) {
-	r.WalletAddress = walletAddress
 }
 
 type BalanceResponse struct {

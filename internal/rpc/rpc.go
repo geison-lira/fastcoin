@@ -1,4 +1,4 @@
-package components
+package rpc
 
 import (
 	"encoding/json"
@@ -7,32 +7,15 @@ import (
 	"time"
 )
 
-type RPCRequest struct {
-	Method string `json:"method"`
-	Params any    `json:"params"`
-}
-
 func (r *RPCRequest) NewRequest(method string, params any) {
 	r.Method = method
 	r.Params = params
-}
-
-type RPCResponse struct {
-	Success bool   `json:"success"`
-	Data    any    `json:"data,omitempty"`
-	Error   string `json:"error,omitempty"`
 }
 
 func (r *RPCResponse) NewResponse(success bool, data any, err string) {
 	r.Success = success
 	r.Data = data
 	r.Error = err
-}
-
-type RPCConnection struct {
-	Protocol string
-	Address  string
-	TimeOut  time.Duration
 }
 
 func (r *RPCConnection) NewConnection(protocol string, address string, timeOut time.Duration) {
