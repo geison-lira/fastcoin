@@ -12,7 +12,7 @@ func (c *CoreNode) control(usrInput []string) bool {
 		if len(usrInput) == 2 {
 			c.listen(usrInput[1:])
 		} else {
-			fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
+			fmt.Println("[CORE-ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
 		}
 	case "mn":
 		fmt.Println("Mining sequence")
@@ -20,17 +20,17 @@ func (c *CoreNode) control(usrInput []string) bool {
 		if len(usrInput) == 1 {
 			c.help()
 		} else {
-			fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
+			fmt.Println("[CORE-ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
 		}
 	case "q":
 		if len(usrInput) == 1 {
-			fmt.Println("[INFO] Exiting core...")
+			fmt.Println("[CORE-INFO] Exiting core...")
 			return true
 		} else {
-			fmt.Println("[ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
+			fmt.Println("[CORE-ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
 		}
 	default:
-		fmt.Println("[ERROR] Command Typing Error: core-unknown command (type h for help).")
+		fmt.Println("[CORE-ERROR] Command Typing Error: core-unknown command (type h for help).")
 	}
 	return false
 }
@@ -39,43 +39,43 @@ func (c *CoreNode) listen(usrInput []string) {
 	switch usrInput[0] {
 	case "start":
 		if c.Listening {
-			fmt.Println("[ERROR] Network Connection Error: core-already listening network")
+			fmt.Println("[CORE-ERROR] Network Listening Error: core-already listening network")
 			return
 		}
 		var rpc rpc.RPCConnection
 		rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
 		err := rpc.Handle(c.ListenErrChan, c.ListenSigStop)
 		if err != nil {
-			fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
+			fmt.Printf("[CORE-ERROR] Network Connection Error: core-%v\n", err)
 			return
 		}
 		c.Listening = true
-		fmt.Println("[SUCCESS] Core Successfully Listening")
+		fmt.Println("[CORE-SUCCESS] Core Successfully Listening")
 	case "check":
 		if !c.Listening {
-			fmt.Println("[INFO] Core is not listening")
+			fmt.Println("[CORE-INFO] Core is currently not listening.")
 			return
 		}
 		select {
 		case err := <-c.ListenErrChan:
 			if err != nil {
 				c.Listening = false
-				fmt.Printf("[ERROR] Network Connection Error: core-%v\n", err)
+				fmt.Printf("[CORE-ERROR] Network Connection Error: core-%v\n", err)
 				return
 			}
 		default:
 		}
-		fmt.Println("[INFO] Core is listening")
+		fmt.Println("[CORE-INFO] Core is currently listening")
 	case "stop":
 		if !c.Listening {
-			fmt.Println("[ERROR] Network Connection Error: core-already not listening network")
+			fmt.Println("[CORE-ERROR] Network Listening Error: core-already not listening network")
 			return
 		}
 		c.ListenSigStop <- true
 		c.Listening = false
-		fmt.Println("[SUCCESS] Core Stopped Listening")
+		fmt.Println("[CORE-SUCCESS] Core Succesfully Stopped Listening")
 	default:
-		fmt.Println("[ERROR] Command Mode Error: core-unknown command mode (type h for help).")
+		fmt.Println("[CORE-ERROR] Command Parameter Error: core-unknown command parameter (type h for help).")
 	}
 }
 

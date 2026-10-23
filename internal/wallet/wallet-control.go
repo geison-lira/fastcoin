@@ -14,35 +14,35 @@ func (w *WalletNode) control(usrInput []string) bool {
 		if len(usrInput) == 3 {
 			w.transaction(usrInput[1:])
 		} else {
-			fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 		}
 	case "st":
 		if len(usrInput) == 1 {
 			w.statement()
 		} else {
-			fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 		}
 	case "bl":
 		if len(usrInput) == 1 {
 			w.balance()
 		} else {
-			fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 		}
 	case "h":
 		if len(usrInput) == 1 {
 			w.help()
 		} else {
-			fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 		}
 	case "q":
 		if len(usrInput) == 1 {
-			fmt.Println("[INFO] Exiting wallet...")
+			fmt.Println("[WALLET-INFO] Exiting wallet...")
 			return true
 		} else {
-			fmt.Println("[ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
 		}
 	default:
-		fmt.Println("[ERROR] Command Typing Error: wallet-unknown command (type h for help).")
+		fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-unknown command (type h for help).")
 	}
 	return false
 }
@@ -50,11 +50,11 @@ func (w *WalletNode) control(usrInput []string) bool {
 func (w *WalletNode) transaction(usrInput []string) {
 	ammount, err := strconv.ParseInt(usrInput[0], 10, 64)
 	if err != nil {
-		fmt.Printf("[ERROR] Transaction Parsing Error: wallet-%v\n", err)
+		fmt.Printf("[WALLET-ERROR] Transaction Parsing Error: wallet-%v\n", err)
 		return
 	}
 	if ammount <= 0 {
-		fmt.Println("[ERROR] Transaction Ammount Error: wallet-invalid ammount")
+		fmt.Println("[WALLET-ERROR] Transaction Ammount Error: wallet-invalid ammount")
 		return
 	}
 	recipient := usrInput[1]
@@ -62,7 +62,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 	var tx rpc.Transaction
 	err = tx.NewTransaction(w.WalletAddress, recipient, ammount, w.Nonce, w.PrivKey)
 	if err != nil {
-		fmt.Printf("[ERROR] Transaction Signing Error: wallet-%v\n", err)
+		fmt.Printf("[WALLET-ERROR] Transaction Signing Error: wallet-%v\n", err)
 		return
 	}
 	var req rpc.RPCRequest
@@ -71,14 +71,14 @@ func (w *WalletNode) transaction(usrInput []string) {
 	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	res, err := rpc.Send(req)
 	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
+		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return
 	}
 	if !res.Success {
-		fmt.Printf("[ERROR] Transaction Broadcast Error: core-%s\n", res.Error)
+		fmt.Printf("[WALLET-ERROR] Transaction Broadcast Error: core-%s\n", res.Error)
 		return
 	}
-	fmt.Println("[SUCCESS] Transaction Broadcast Successful")
+	fmt.Println("[WALLET-SUCCESS] Transaction Broadcast Successful")
 	fmt.Printf("TxId: %s\n", tx.Id)
 }
 
@@ -91,17 +91,17 @@ func (w *WalletNode) statement() {
 	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	res, err := rpc.Send(req)
 	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
+		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return
 	}
 	if !res.Success {
-		fmt.Printf("[ERROR] Statement Fetching Error: core-%s\n", res.Error)
+		fmt.Printf("[WALLET-ERROR] Statement Fetching Error: core-%s\n", res.Error)
 		return
 	}
 	bytes, _ := json.Marshal(res.Data)
 	var stRes rpc.StatementResponse
 	json.Unmarshal(bytes, &stRes)
-	fmt.Println("[SUCCESS] Statement Fetching Successful")
+	fmt.Println("[WALLET-SUCCESS] Statement Fetching Successful")
 	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", stRes.WalletAddress, stRes.Balance)
 	fmt.Println("Transactions:")
 	for _, tx := range stRes.Transactions {
@@ -118,17 +118,17 @@ func (w *WalletNode) balance() {
 	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	res, err := rpc.Send(req)
 	if err != nil {
-		fmt.Printf("[ERROR] Network Connection Error: wallet-%v\n", err)
+		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return
 	}
 	if !res.Success {
-		fmt.Printf("[ERROR] Balance Fetching Error: core-%s\n", res.Error)
+		fmt.Printf("[WALLET-ERROR] Balance Fetching Error: core-%s\n", res.Error)
 		return
 	}
 	bytes, _ := json.Marshal(res.Data)
 	var blRes rpc.BalanceResponse
 	json.Unmarshal(bytes, &blRes)
-	fmt.Println("[SUCCESS] Balance Fetching Successful")
+	fmt.Println("[WALLET-SUCCESS] Balance Fetching Successful")
 	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", blRes.WalletAddress, blRes.Balance)
 }
 
