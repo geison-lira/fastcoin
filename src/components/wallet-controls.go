@@ -60,7 +60,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 	}
 	recipient := usrInput[1]
 	w.Nonce++
-	var tx *Transaction
+	var tx Transaction
 	tx.NewTransaction(w.WalletAddress, recipient, ammount, w.Nonce)
 	signBytes, err := ecdsa.SignASN1(rand.Reader, w.PrivKey, []byte(tx.Id))
 	if err != nil {
@@ -86,7 +86,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 }
 
 func (w *WalletNode) statement() {
-	var stReq *StatementRequest
+	var stReq StatementRequest
 	stReq.NewRequest(w.WalletAddress)
 	var req RPCRequest
 	req.NewRequest("get_st", stReq)
@@ -113,7 +113,7 @@ func (w *WalletNode) statement() {
 }
 
 func (w *WalletNode) balance() {
-	var blReq *BalanceRequest
+	var blReq BalanceRequest
 	blReq.NewRequest(w.WalletAddress)
 	var req RPCRequest
 	req.NewRequest("get_bl", blReq)
