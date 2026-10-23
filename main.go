@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fastcoin/src/app"
+	"fastcoin/internal/app"
 	"flag"
 	"os"
 )
