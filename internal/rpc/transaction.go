@@ -27,5 +27,8 @@ func (t *Transaction) hash() string {
 
 func (t *Transaction) sign(privKey *ecdsa.PrivateKey) (string, error) {
 	signBytes, err := ecdsa.SignASN1(rand.Reader, privKey, []byte(t.Id))
-	return hex.EncodeToString(signBytes), err
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(signBytes), nil
 }
