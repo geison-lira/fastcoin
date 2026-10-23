@@ -65,6 +65,8 @@ func (c *CoreNode) listen(usrInput []string) {
 		c.ListenSigStop <- true
 		c.Listening = false
 		fmt.Println("[SUCCESS] Core Stopped Listening")
+	default:
+		fmt.Println("[ERROR] Command Mode Error: core-unknown command mode (type h for help).")
 	}
 }
 
