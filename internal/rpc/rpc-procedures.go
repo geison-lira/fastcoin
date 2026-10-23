@@ -20,24 +20,26 @@ func (r *RPCConnection) procedures(req RPCRequest) RPCResponse {
 		}
 	case "get_st":
 		var stReq StatementRequest
+		var stRes StatementResponse
 		bytes, _ := json.Marshal(req.Params)
 		json.Unmarshal(bytes, &stReq)
 		bl, txs, err := FetchStatement(stReq.WalletAddress)
-		stRes := StatementResponse{WalletAddress: stReq.WalletAddress, Balance: bl, Transactions: txs}
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
 		} else {
+			stRes.NewResponse(stReq.WalletAddress, bl, txs)
 			res.NewResponse(true, stRes, "")
 		}
 	case "get_bl":
 		var blReq BalanceRequest
+		var blRes BalanceResponse
 		bytes, _ := json.Marshal(req.Params)
 		json.Unmarshal(bytes, &blReq)
 		bl, err := FetchBalance(blReq.WalletAddress)
-		blRes := BalanceResponse{WalletAddress: blReq.WalletAddress, Balance: bl}
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
 		} else {
+			blRes.NewResponse(blReq.WalletAddress, bl)
 			res.NewResponse(true, blRes, "")
 		}
 	default:
