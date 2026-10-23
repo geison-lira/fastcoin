@@ -1,8 +1,6 @@
 package wallet
 
 import (
-	"crypto/ecdsa"
-	"crypto/rand"
 	"encoding/json"
 	"fastcoin/internal/rpc"
 	"fmt"
@@ -62,13 +60,11 @@ func (w *WalletNode) transaction(usrInput []string) {
 	recipient := usrInput[1]
 	w.Nonce++
 	var tx rpc.Transaction
-	tx.NewTransaction(w.WalletAddress, recipient, ammount, w.Nonce)
-	signBytes, err := ecdsa.SignASN1(rand.Reader, w.PrivKey, []byte(tx.Id))
+	err = tx.NewTransaction(w.WalletAddress, recipient, ammount, w.Nonce, w.PrivKey)
 	if err != nil {
 		fmt.Printf("[ERROR] Transaction Signing Error: wallet-%v\n", err)
 		return
 	}
-	tx.Sign(signBytes)
 	var req rpc.RPCRequest
 	req.NewRequest("set_tx", tx)
 	var rpc rpc.RPCConnection
