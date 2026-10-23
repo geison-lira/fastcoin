@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-func Run(keys string, node string) error {
+func Run(node string, keys string) error {
 	var err error
 	switch node {
 	case "wallet":
