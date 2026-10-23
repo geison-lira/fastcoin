@@ -65,9 +65,12 @@ func (r *RPCConnection) Handle(listenErrChan chan error, listenSigStop chan bool
 	defer listener.Close()
 	go func() {
 		for {
-			stop := <-listenSigStop
-			if stop {
-				return
+			select {
+			case stop := <-listenSigStop:
+				if stop {
+					return
+				}
+			default:
 			}
 			conn, err := listener.Accept()
 			if err != nil {
