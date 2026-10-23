@@ -1,4 +1,4 @@
-package statement
+package rpc
 
 type StatementRequest struct {
 	WalletAddress string `json:"address"`

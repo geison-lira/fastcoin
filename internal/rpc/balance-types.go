@@ -1,4 +1,4 @@
-package balance
+package rpc
 
 type BalanceRequest struct {
 	WalletAddress string `json:"address"`

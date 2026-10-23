@@ -1,4 +1,4 @@
-package transaction
+package rpc
 
 import (
 	"crypto/sha256"

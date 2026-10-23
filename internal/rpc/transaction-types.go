@@ -1,4 +1,4 @@
-package transaction
+package rpc
 
 type Transaction struct {
 	Id        string `json:"id"`
