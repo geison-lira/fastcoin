@@ -80,7 +80,7 @@ func (c *CoreNode) listen(usrInput []string) {
 
 func (c *CoreNode) help() {
 	fmt.Println("      Command      |            Structure            ")
-	fmt.Println("Start Listening    |  lt <mode: start, check, stop>  ")
+	fmt.Println("Listening Control  |  lt <mode: start | check | stop>")
 	fmt.Println("Command List Help  |  h                              ")
 	fmt.Println("Quit Program       |  q                              ")
 }
