@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"crypto/ecdsa"
 	"errors"
-	"fastcoin/internal/components"
+	"fastcoin/internal/core"
 	"fastcoin/internal/handlers"
 	"fastcoin/internal/utils"
+	"fastcoin/internal/wallet"
 	"fmt"
 	"os"
 	"strings"
@@ -17,7 +18,7 @@ func Run(keys string, node string) error {
 	var err error
 	switch node {
 	case "wallet":
-		var wallet *components.WalletNode
+		var wallet *wallet.WalletNode
 		fmt.Println("[INFO] Launching wallet...")
 		if !utils.FileExists(keys) {
 			wallet, err = newWalletNode("127.0.0.1:9000", keys)
@@ -32,7 +33,7 @@ func Run(keys string, node string) error {
 		}
 		err = wallet.Enter(keys)
 	case "core":
-		var core *components.CoreNode
+		var core *core.CoreNode
 		fmt.Println("[INFO] Launching core...")
 		if !utils.FileExists(keys) {
 			err = errors.New("missing miner wallet keys")
@@ -51,7 +52,7 @@ func Run(keys string, node string) error {
 	return err
 }
 
-func newWalletNode(coreAddress string, keys string) (*components.WalletNode, error) {
+func newWalletNode(coreAddress string, keys string) (*wallet.WalletNode, error) {
 	var err error
 	var privKey *ecdsa.PrivateKey
 	var pubKey *ecdsa.PublicKey
@@ -88,7 +89,7 @@ func newWalletNode(coreAddress string, keys string) (*components.WalletNode, err
 	}
 	nonce := time.Now().UnixNano()
 	fmt.Println("[INFO] Welcome to your new FastCoin wallet, your wallet was successfully created and your keys are stored in keys.pem.")
-	return &components.WalletNode{
+	return &wallet.WalletNode{
 		PrivKey:       privKey,
 		PubKey:        pubKey,
 		WalletAddress: walletAddress,
@@ -97,7 +98,7 @@ func newWalletNode(coreAddress string, keys string) (*components.WalletNode, err
 	}, err
 }
 
-func loadWalletNode(coreAddress string, keys string) (*components.WalletNode, error) {
+func loadWalletNode(coreAddress string, keys string) (*wallet.WalletNode, error) {
 	var err error
 	var privKey *ecdsa.PrivateKey
 	var pubKey *ecdsa.PublicKey
@@ -114,7 +115,7 @@ func loadWalletNode(coreAddress string, keys string) (*components.WalletNode, er
 	}
 	nonce := time.Now().UnixNano()
 	fmt.Println("[INFO] Welcome back to your wallet, type a command and it's parameters (type h for help).")
-	return &components.WalletNode{
+	return &wallet.WalletNode{
 		PrivKey:       privKey,
 		PubKey:        pubKey,
 		WalletAddress: walletAddress,
@@ -123,7 +124,7 @@ func loadWalletNode(coreAddress string, keys string) (*components.WalletNode, er
 	}, err
 }
 
-func newCoreNode(coreAddress string, keys string) (*components.CoreNode, error) {
+func newCoreNode(coreAddress string, keys string) (*core.CoreNode, error) {
 	var err error
 	var pubKey *ecdsa.PublicKey
 	fmt.Println("[INFO] Keys found, creating core...")
@@ -142,7 +143,7 @@ func newCoreNode(coreAddress string, keys string) (*components.CoreNode, error) 
 	listenErrChan := make(chan error)
 	listenSigStop := make(chan bool)
 	fmt.Println("[INFO] Welcome to core node, type a command and it's parameters (type h for help).")
-	return &components.CoreNode{
+	return &core.CoreNode{
 		Blockchain:/*blockchain handlers*/ nil,
 		Peers:         peers,
 		CoreAddress:   coreAddress,
