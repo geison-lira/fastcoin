@@ -12,7 +12,7 @@ func Run(node string, keys string) error {
 	var err error
 	switch node {
 	case "wallet":
-		var wallet *wallet.WalletNode
+		var wallet wallet.WalletNode
 		fmt.Println("[INIT-INFO] Launching wallet...")
 		if !utils.FileExists(keys) {
 			err = wallet.NewWalletNode("127.0.0.1:9000", keys)
@@ -27,7 +27,7 @@ func Run(node string, keys string) error {
 		}
 		err = wallet.Enter(keys)
 	case "core":
-		var core *core.CoreNode
+		var core core.CoreNode
 		fmt.Println("[INIT-INFO] Launching core...")
 		if !utils.FileExists(keys) {
 			err = errors.New("missing miner wallet keys")
