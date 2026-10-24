@@ -59,10 +59,15 @@ func (r *RPCConnection) Handle(listenSigStop chan bool) error {
 			go func(conn net.Conn) {
 				defer conn.Close()
 				var req RPCRequest
+				var res RPCResponse
 				if err := json.NewDecoder(conn).Decode(&req); err != nil {
+					res.NewResponse(false, nil, err.Error())
+					if err := json.NewEncoder(conn).Encode(res); err != nil {
+						return
+					}
 					return
 				}
-				res := r.procedures(req)
+				res = r.procedures(req)
 				if err := json.NewEncoder(conn).Encode(res); err != nil {
 					return
 				}
