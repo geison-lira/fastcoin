@@ -67,9 +67,9 @@ func (w *WalletNode) transaction(usrInput []string) {
 	}
 	var req rpc.RPCRequest
 	req.NewRequest("set_tx", tx)
-	var rpc rpc.RPCConnection
-	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
-	res, err := rpc.Send(req)
+	var rpcConn rpc.RPCConnection
+	rpcConn.NewConnection("tcp", w.CoreAddress, 3*time.Second)
+	res, err := rpcConn.Send(req)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return
@@ -87,9 +87,9 @@ func (w *WalletNode) statement() {
 	stReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
 	req.NewRequest("get_st", stReq)
-	var rpc rpc.RPCConnection
-	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
-	res, err := rpc.Send(req)
+	var rpcConn rpc.RPCConnection
+	rpcConn.NewConnection("tcp", w.CoreAddress, 3*time.Second)
+	res, err := rpcConn.Send(req)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return
@@ -114,9 +114,9 @@ func (w *WalletNode) balance() {
 	blReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
 	req.NewRequest("get_bl", blReq)
-	var rpc rpc.RPCConnection
-	rpc.NewConnection("tcp", w.CoreAddress, 3*time.Second)
-	res, err := rpc.Send(req)
+	var rpcConn rpc.RPCConnection
+	rpcConn.NewConnection("tcp", w.CoreAddress, 3*time.Second)
+	res, err := rpcConn.Send(req)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return

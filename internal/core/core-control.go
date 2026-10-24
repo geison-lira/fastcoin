@@ -42,9 +42,9 @@ func (c *CoreNode) listen(usrInput []string) {
 			fmt.Println("[CORE-ERROR] Network Listening Error: core-already listening network")
 			return
 		}
-		var rpc rpc.RPCConnection
-		rpc.NewConnection("tcp", c.CoreAddress, 3*time.Second)
-		err := rpc.Handle(c.ListenErrChan, c.ListenSigStop)
+		var rpcConn rpc.RPCConnection
+		rpcConn.NewConnection("tcp", c.CoreAddress, 3*time.Second)
+		err := rpcConn.Handle(c.ListenErrChan, c.ListenSigStop)
 		if err != nil {
 			fmt.Printf("[CORE-ERROR] Network Connection Error: core-%v\n", err)
 			return
