@@ -26,7 +26,6 @@ func (c *CoreNode) NewCoreNode(coreAddress string, keys string) error {
 	//blockchain creation and handling here
 	c.CoreAddress = coreAddress
 	c.Peers = make([]string, 0)
-	c.ListenErrChan = make(chan error)
 	c.ListenSigStop = make(chan bool)
 	fmt.Println("[INIT-SUCCESS] Welcome to your new FastCoin core, type h to see commands.")
 	return nil

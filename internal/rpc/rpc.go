@@ -40,37 +40,34 @@ func (r *RPCConnection) Send(req RPCRequest) (*RPCResponse, error) {
 	return &res, nil
 }
 
-func (r *RPCConnection) Handle(listenErrChan chan error, listenSigStop chan bool) error {
+func (r *RPCConnection) Handle(listenSigStop chan bool) error {
 	listener, err := net.Listen(r.Protocol, r.Address)
 	if err != nil {
 		return fmt.Errorf("unable to listen to the network at %s: %w", r.Address, err)
 	}
-	defer listener.Close()
 	go func() {
+		defer listener.Close()
+		<-listenSigStop
+	}()
+	go func() {
+		defer listener.Close()
 		for {
-			select {
-			case stop := <-listenSigStop:
-				if stop {
-					return
-				}
-			default:
-			}
 			conn, err := listener.Accept()
 			if err != nil {
-				continue
-			}
-			defer conn.Close()
-			var req RPCRequest
-			if err := json.NewDecoder(conn).Decode(&req); err != nil {
-				listenErrChan <- err
 				return
 			}
-			res := r.procedures(req)
-			if err := json.NewEncoder(conn).Encode(res); err != nil {
-				listenErrChan <- err
-				return
-			}
+			go func(conn net.Conn) {
+				defer conn.Close()
+				var req RPCRequest
+				if err := json.NewDecoder(conn).Decode(&req); err != nil {
+					return
+				}
+				res := r.procedures(req)
+				if err := json.NewEncoder(conn).Encode(res); err != nil {
+					return
+				}
+			}(conn)
 		}
 	}()
-	return err
+	return nil
 }
