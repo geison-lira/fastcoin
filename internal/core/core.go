@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+const difficulty = 3
+
 func (c *CoreNode) NewCoreNode(coreAddress string, keys string) error {
 	var err error
 	var pubKey *ecdsa.PublicKey
@@ -23,7 +25,7 @@ func (c *CoreNode) NewCoreNode(coreAddress string, keys string) error {
 		fmt.Printf("[INIT-FATAL] Address Generation Error: init-%v\n", err)
 		return err
 	}
-	//blockchain creation and handling here
+	c.Blockchain.newBlockchain(difficulty)
 	c.CoreAddress = coreAddress
 	c.Peers = make([]string, 0)
 	c.ListenSigStop = make(chan bool)

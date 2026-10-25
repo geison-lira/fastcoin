@@ -9,7 +9,17 @@ import (
 	"time"
 )
 
-func (b *Block) hashCalculate() {
+func (b *Block) newBlock() {
+	b.Id = 0
+	b.Timestamp = time.Now().Unix()
+	b.Transactions = make([]rpc.Transaction, 0)
+	b.PrevHash = "0000000000000000000000000000000000000000000000000000000000000000"
+	b.Nonce = 0
+	b.Miner = "SYSTEM"
+	b.Hash = b.hash()
+}
+
+func (b *Block) hash() string {
 	var builder strings.Builder
 	data := strconv.FormatInt(b.Id, 10) + strconv.FormatInt(b.Timestamp, 10)
 	for _, tx := range b.Transactions {
@@ -18,22 +28,15 @@ func (b *Block) hashCalculate() {
 	data += builder.String()
 	data += b.PrevHash + strconv.FormatInt(b.Nonce, 10) + b.Miner
 	dataHash := sha256.Sum256([]byte(data))
-	b.Hash = hex.EncodeToString(dataHash[:])
+	return hex.EncodeToString(dataHash[:])
 }
 
-func (bc *Blockchain) blockchainGenerate(difficulty int) {
+func (bc *Blockchain) newBlockchain(difficulty int) {
 	bc.Blocks = make([]Block, 0)
 	bc.Mempool = make([]rpc.Transaction, 0)
 	bc.Balances = make(map[string]int64)
 	bc.Difficulty = difficulty
-	genesisBlock := Block{
-		Id:           0,
-		Timestamp:    time.Now().Unix(),
-		Transactions: make([]rpc.Transaction, 0),
-		PrevHash:     "0000000000000000000000000000000000000000000000000000000000000000",
-		Nonce:        0,
-		Miner:        "GENESIS",
-	}
-	genesisBlock.hashCalculate()
-	bc.Blocks = append(bc.Blocks, genesisBlock)
+	var zeroBlock Block
+	zeroBlock.newBlock()
+	bc.Blocks = append(bc.Blocks, zeroBlock)
 }
