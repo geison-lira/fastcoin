@@ -9,13 +9,12 @@ import (
 	"time"
 )
 
-func (b *Block) newBlock() {
-	b.Id = 0
+func (b *Block) newBlock(id int64, transactions []rpc.Transaction, prevHash string, miner string) {
+	b.Id = id
 	b.Timestamp = time.Now().Unix()
-	b.Transactions = make([]rpc.Transaction, 0)
-	b.PrevHash = "0000000000000000000000000000000000000000000000000000000000000000"
-	b.Nonce = 0
-	b.Miner = "SYSTEM"
+	b.Transactions = transactions
+	b.PrevHash = prevHash
+	b.Miner = miner
 	b.Hash = b.hash()
 }
 
@@ -37,6 +36,6 @@ func (bc *Blockchain) newBlockchain(difficulty int) {
 	bc.Balances = make(map[string]int64)
 	bc.Difficulty = difficulty
 	var zeroBlock Block
-	zeroBlock.newBlock()
+	zeroBlock.newBlock(0, nil, "0000000000000000000000000000000000000000000000000000000000000000", "SYSTEM")
 	bc.Blocks = append(bc.Blocks, zeroBlock)
 }
