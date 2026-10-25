@@ -9,6 +9,7 @@ type CoreNode struct {
 	WalletAddress string
 	ListenSigStop chan bool
 	Listening     bool
+	MineSigStop   chan bool
 	Mining        bool
 	mu            sync.Mutex
 }

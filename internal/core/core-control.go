@@ -81,22 +81,22 @@ func (c *CoreNode) mine(usrInput []string) {
 			fmt.Println("[CORE-ERROR] Blockchain Mining Error: core-already mining blocks")
 			return
 		}
-		//Mining startup here
+		c.Blockchain.mine(c.WalletAddress, c.MineSigStop)
 		c.Mining = true
 		fmt.Println("[CORE-SUCCESS] Core Successfully Mining")
 	case "check":
-		if !c.Listening {
-			fmt.Println("[CORE-INFO] Core is currently not listening.")
+		if !c.Mining {
+			fmt.Println("[CORE-INFO] Core is currently not mining.")
 			return
 		}
-		fmt.Println("[CORE-INFO] Core is currently listening")
+		fmt.Println("[CORE-INFO] Core is currently mining")
 	case "stop":
 		if !c.Mining {
 			fmt.Println("[CORE-ERROR] Blockchain Mining Error: core-already not mining blocks")
 			return
 		}
-		//Mining stop here
-		c.Listening = false
+		c.MineSigStop <- true
+		c.Mining = false
 		fmt.Println("[CORE-SUCCESS] Core Succesfully Stopped Mining")
 	default:
 		fmt.Println("[CORE-ERROR] Command Parameter Error: core-unknown command parameter (type h for help).")

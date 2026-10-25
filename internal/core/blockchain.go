@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+const reward = 50
+
 func (b *Block) newBlock(id int64, transactions []rpc.Transaction, prevHash string, miner string) {
 	b.Id = id
 	b.Timestamp = time.Now().Unix()
@@ -30,6 +32,11 @@ func (b *Block) hash() string {
 	return hex.EncodeToString(dataHash[:])
 }
 
+func (b *Block) updateHash() {
+	b.Nonce++
+	b.Hash = b.hash()
+}
+
 func (bc *Blockchain) newBlockchain(difficulty int) {
 	bc.Blocks = make([]Block, 0)
 	bc.Mempool = make([]rpc.Transaction, 0)
@@ -38,4 +45,46 @@ func (bc *Blockchain) newBlockchain(difficulty int) {
 	var zeroBlock Block
 	zeroBlock.newBlock(0, nil, "0000000000000000000000000000000000000000000000000000000000000000", "SYSTEM")
 	bc.Blocks = append(bc.Blocks, zeroBlock)
+}
+
+func (bc *Blockchain) mine(miner string, mineSigStop chan bool) {
+	go func() {
+		for {
+			select {
+			case <-mineSigStop:
+				return
+			default:
+			}
+			bc.mu.Lock()
+			var rewardTx rpc.Transaction
+			prevBlock := bc.Blocks[len(bc.Blocks)-1]
+			nonce := time.Now().Unix()
+			rewardTx.NewReward("SYSTEM", miner, reward, nonce)
+			txs := append([]rpc.Transaction{rewardTx}, bc.Mempool...)
+			bc.Mempool = make([]rpc.Transaction, 0)
+			bc.mu.Unlock()
+			var currBlock Block
+			currBlock.newBlock(prevBlock.Id+1, txs, prevBlock.Hash, miner)
+			target := strings.Repeat("0", bc.Difficulty)
+			for {
+				if strings.HasPrefix(currBlock.Hash, target) {
+					break
+				}
+				currBlock.updateHash()
+			}
+			bc.mu.Lock()
+			bc.Blocks = append(bc.Blocks, currBlock)
+			bc.updateBalances(currBlock)
+			bc.mu.Unlock()
+		}
+	}()
+}
+
+func (bc *Blockchain) updateBalances(currBlock Block) {
+	for _, tx := range currBlock.Transactions {
+		if tx.Sender != "SYSTEM" {
+			bc.Balances[tx.Sender] -= tx.Ammount
+		}
+		bc.Balances[tx.Recipient] += tx.Ammount
+	}
 }
