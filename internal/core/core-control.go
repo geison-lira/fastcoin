@@ -15,7 +15,11 @@ func (c *CoreNode) control(usrInput []string) bool {
 			fmt.Println("[CORE-ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
 		}
 	case "mn":
-		fmt.Println("Mining sequence")
+		if len(usrInput) == 2 {
+			c.mine(usrInput[1:])
+		} else {
+			fmt.Println("[CORE-ERROR] Command Typing Error: core-wrong command syntax (type h for help).")
+		}
 	case "h":
 		if len(usrInput) == 1 {
 			c.help()
@@ -70,9 +74,39 @@ func (c *CoreNode) listen(usrInput []string) {
 	}
 }
 
+func (c *CoreNode) mine(usrInput []string) {
+	switch usrInput[0] {
+	case "start":
+		if c.Mining {
+			fmt.Println("[CORE-ERROR] Blockchain Mining Error: core-already mining blocks")
+			return
+		}
+		//Mining startup here
+		c.Mining = true
+		fmt.Println("[CORE-SUCCESS] Core Successfully Mining")
+	case "check":
+		if !c.Listening {
+			fmt.Println("[CORE-INFO] Core is currently not listening.")
+			return
+		}
+		fmt.Println("[CORE-INFO] Core is currently listening")
+	case "stop":
+		if !c.Mining {
+			fmt.Println("[CORE-ERROR] Blockchain Mining Error: core-already not mining blocks")
+			return
+		}
+		//Mining stop here
+		c.Listening = false
+		fmt.Println("[CORE-SUCCESS] Core Succesfully Stopped Mining")
+	default:
+		fmt.Println("[CORE-ERROR] Command Parameter Error: core-unknown command parameter (type h for help).")
+	}
+}
+
 func (c *CoreNode) help() {
 	fmt.Println("      Command      |            Structure            ")
 	fmt.Println("Listening Control  |  lt <mode: start | check | stop>")
+	fmt.Println("Mining Control     |  mn <mode: start | check | stop>")
 	fmt.Println("Command List Help  |  h                              ")
 	fmt.Println("Quit Program       |  q                              ")
 }
