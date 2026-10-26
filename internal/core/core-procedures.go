@@ -1,16 +1,16 @@
-package rpc
+package core
 
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+	"fastcoin/internal/rpc"
 )
 
-func (r *RPCConnection) procedures(req RPCRequest) RPCResponse {
-	var res RPCResponse
+func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
+	var res rpc.RPCResponse
 	switch req.Method {
 	case "set_tx":
-		var tx Transaction
+		var tx rpc.Transaction
 		bytes, err := json.Marshal(req.Params)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
@@ -21,18 +21,15 @@ func (r *RPCConnection) procedures(req RPCRequest) RPCResponse {
 			res.NewResponse(false, nil, err.Error())
 			return res
 		}
-		//err := SubmitTransaction(tx)
-		//testing
-		fmt.Println("SubTx")
-		//end
+		err := SubmitTransaction(tx)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
 			return res
 		}
 		res.NewResponse(true, nil, "")
 	case "get_st":
-		var stReq StatementRequest
-		var stRes StatementResponse
+		var stReq rpc.StatementRequest
+		var stRes rpc.StatementResponse
 		bytes, err := json.Marshal(req.Params)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
@@ -43,14 +40,7 @@ func (r *RPCConnection) procedures(req RPCRequest) RPCResponse {
 			res.NewResponse(false, nil, err.Error())
 			return res
 		}
-		//bl, txs, err := FetchStatement(stReq.WalletAddress)
-		//testing
-		fmt.Println("GetBl")
-		var bl int64
-		var txs []Transaction
-		bl = 10000
-		txs = append(txs, Transaction{"sys1", "syswall", "3341", 10000, 3, "9900"})
-		//end
+		bl, txs, err := FetchStatement(stReq.WalletAddress)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
 			return res
@@ -58,8 +48,8 @@ func (r *RPCConnection) procedures(req RPCRequest) RPCResponse {
 		stRes.NewResponse(stReq.WalletAddress, bl, txs)
 		res.NewResponse(true, stRes, "")
 	case "get_bl":
-		var blReq BalanceRequest
-		var blRes BalanceResponse
+		var blReq rpc.BalanceRequest
+		var blRes rpc.BalanceResponse
 		bytes, err := json.Marshal(req.Params)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
@@ -70,11 +60,7 @@ func (r *RPCConnection) procedures(req RPCRequest) RPCResponse {
 			res.NewResponse(false, nil, err.Error())
 			return res
 		}
-		//bl, err := FetchBalance(blReq.WalletAddress)
-		//testing
-		var bl int64
-		bl = 10000
-		//end
+		bl, err := FetchBalance(blReq.WalletAddress)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
 			return res
