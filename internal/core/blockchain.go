@@ -3,6 +3,8 @@ package core
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
+	"fastcoin/internal/handlers"
 	"fastcoin/internal/rpc"
 	"strconv"
 	"strings"
@@ -88,6 +90,47 @@ func (bc *Blockchain) updateBalances(currBlock Block) {
 		}
 		bc.Balances[tx.Recipient] += tx.Ammount
 	}
+}
+
+func (bc *Blockchain) SubmitTransaction(tx rpc.Transaction) error {
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
+	if tx.Ammount <= 0 {
+		return errors.New("invalid ammount")
+	}
+	if tx.Sender == "SYSTEM" {
+		return nil
+	}
+	if tx.Id != tx.Hash() {
+		return errors.New("transaction hash mismatch")
+	}
+	pubKey, err := handlers.StringToPubKey(tx.SenderPubKey)
+	if err != nil {
+		return err
+	}
+	expectedAddress, err := handlers.AddressGenerate(pubKey)
+	if err != nil {
+		return err
+	}
+	if tx.Sender != expectedAddress {
+		return errors.New("sender address mismatch")
+	}
+	ok, err := tx.Verify(pubKey)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errors.New("signature validation error")
+	}
+	if tx.Nonce <= bc.Nonces[tx.Sender] {
+		return errors.New("invalid nonce")
+	}
+	if bc.Balances[tx.Sender] < tx.Ammount {
+		return errors.New("insufficient funds")
+	}
+	bc.Nonces[tx.Sender] = tx.Nonce
+	bc.Mempool = append(bc.Mempool, tx)
+	return nil
 }
 
 func (bc *Blockchain) FetchStatement(walletAddress string) (int64, []rpc.Transaction) {
