@@ -19,6 +19,7 @@ type Blockchain struct {
 	Blocks     []Block
 	Mempool    []rpc.Transaction
 	Balances   map[string]int64
+	Nonces     map[string]int64
 	Difficulty int
 	mu         sync.RWMutex
 }
