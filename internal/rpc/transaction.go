@@ -41,3 +41,11 @@ func (t *Transaction) sign(privKey *ecdsa.PrivateKey) (string, error) {
 	}
 	return hex.EncodeToString(signBytes), nil
 }
+
+func (t *Transaction) Verify(pubKey *ecdsa.PublicKey) (bool, error) {
+	signBytes, err := hex.DecodeString(t.Signature)
+	if err != nil {
+		return false, err
+	}
+	return ecdsa.VerifyASN1(pubKey, []byte(t.Id), signBytes), nil
+}
