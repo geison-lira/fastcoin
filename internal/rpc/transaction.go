@@ -14,7 +14,7 @@ func (t *Transaction) NewTransaction(sender string, recipient string, ammount in
 	t.Recipient = recipient
 	t.Ammount = ammount
 	t.Nonce = nonce
-	t.Id = t.hash()
+	t.Id = t.Hash()
 	t.Signature, err = t.sign(privKey)
 	return err
 }
@@ -24,10 +24,10 @@ func (t *Transaction) NewReward(sender string, recipient string, ammount int64, 
 	t.Recipient = recipient
 	t.Ammount = ammount
 	t.Nonce = nonce
-	t.Id = t.hash()
+	t.Id = t.Hash()
 }
 
-func (t *Transaction) hash() string {
+func (t *Transaction) Hash() string {
 	txFields := fmt.Sprintf("%s:%s:%d:%d", t.Sender, t.Recipient, t.Ammount, t.Nonce)
 	hashTxFields := sha256.Sum256([]byte(txFields))
 	return hex.EncodeToString(hashTxFields[:])
