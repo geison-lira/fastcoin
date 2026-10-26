@@ -91,6 +91,25 @@ func (bc *Blockchain) updateBalances(currBlock Block) {
 	}
 }
 
+func (bc *Blockchain) FetchStatement(walletAddress string) (int64, []rpc.Transaction, error) {
+	bc.mu.RLock()
+	defer bc.mu.RUnlock()
+	var txs []rpc.Transaction
+	for _, block := range bc.Blocks {
+		for _, tx := range block.Transactions {
+			if tx.Sender == walletAddress || tx.Recipient == walletAddress {
+				txs = append(txs, tx)
+			}
+		}
+	}
+	bl, exists := bc.Balances[walletAddress]
+	if !exists {
+		err := errors.New("wallet does not exist")
+		return 0, nil, err
+	}
+	return bl, txs, nil
+}
+
 func (bc *Blockchain) FetchBalance(walletAddress string) (int64, error) {
 	bc.mu.RLock()
 	defer bc.mu.RUnlock()
