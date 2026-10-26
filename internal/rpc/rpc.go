@@ -40,7 +40,7 @@ func (r *RPCConnection) Send(req RPCRequest) (*RPCResponse, error) {
 	return &res, nil
 }
 
-func (r *RPCConnection) Handle(listenSigStop chan bool) error {
+func (r *RPCConnection) Handle(procedures func(RPCRequest) RPCResponse, listenSigStop chan bool) error {
 	listener, err := net.Listen(r.Protocol, r.Address)
 	if err != nil {
 		return fmt.Errorf("unable to listen to the network at %s: %w", r.Address, err)
@@ -67,7 +67,7 @@ func (r *RPCConnection) Handle(listenSigStop chan bool) error {
 					}
 					return
 				}
-				res = r.procedures(req)
+				res = procedures(req)
 				if err := json.NewEncoder(conn).Encode(res); err != nil {
 					return
 				}
