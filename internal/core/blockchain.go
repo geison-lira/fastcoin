@@ -41,6 +41,7 @@ func (bc *Blockchain) newBlockchain(difficulty int) {
 	bc.Blocks = make([]Block, 0)
 	bc.Mempool = make([]rpc.Transaction, 0)
 	bc.Balances = make(map[string]int64)
+	bc.Nonces = make(map[string]int64)
 	bc.Difficulty = difficulty
 	var zeroBlock Block
 	zeroBlock.newBlock(0, nil, "0000000000000000000000000000000000000000000000000000000000000000", "SYSTEM")
