@@ -64,18 +64,35 @@ func (bc *Blockchain) mine(miner string, mineSigStop chan bool) {
 			nonce := time.Now().Unix()
 			rewardTx.NewReward("SYSTEM", miner, reward, nonce)
 			txs := append([]rpc.Transaction{rewardTx}, bc.Mempool...)
-			bc.Mempool = make([]rpc.Transaction, 0)
 			bc.mu.Unlock()
 			var currBlock Block
 			currBlock.newBlock(prevBlock.Id+1, txs, prevBlock.Hash, miner)
 			target := strings.Repeat("0", bc.Difficulty)
 			for {
+				select {
+				case <-mineSigStop:
+					return
+				default:
+				}
 				if strings.HasPrefix(currBlock.Hash, target) {
 					break
 				}
 				currBlock.updateHash()
 			}
 			bc.mu.Lock()
+			minedTxIds := make(map[string]bool)
+			for _, tx := range currBlock.Transactions {
+				if tx.Sender != "SYSTEM" {
+					minedTxIds[tx.Id] = true
+				}
+			}
+			updatedMempool := make([]rpc.Transaction, 0)
+			for _, tx := range bc.Mempool {
+				if !minedTxIds[tx.Id] {
+					updatedMempool = append(updatedMempool, tx)
+				}
+			}
+			bc.Mempool = updatedMempool
 			bc.Blocks = append(bc.Blocks, currBlock)
 			bc.updateBalances(currBlock)
 			bc.mu.Unlock()
