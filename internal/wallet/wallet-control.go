@@ -5,7 +5,6 @@ import (
 	"fastcoin/internal/rpc"
 	"fmt"
 	"strconv"
-	"time"
 )
 
 func (w *WalletNode) control(usrInput []string) bool {
@@ -67,9 +66,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 	}
 	var req rpc.RPCRequest
 	req.NewRequest("set_tx", tx)
-	var rpcConn rpc.RPCConnection
-	rpcConn.NewConnection("tcp", w.CoreAddress, 3*time.Second)
-	res, err := rpcConn.Send(req)
+	res, err := w.Connection.Send(req)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return
@@ -87,9 +84,7 @@ func (w *WalletNode) statement() {
 	stReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
 	req.NewRequest("get_st", stReq)
-	var rpcConn rpc.RPCConnection
-	rpcConn.NewConnection("tcp", w.CoreAddress, 3*time.Second)
-	res, err := rpcConn.Send(req)
+	res, err := w.Connection.Send(req)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return
@@ -114,9 +109,7 @@ func (w *WalletNode) balance() {
 	blReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
 	req.NewRequest("get_bl", blReq)
-	var rpcConn rpc.RPCConnection
-	rpcConn.NewConnection("tcp", w.CoreAddress, 3*time.Second)
-	res, err := rpcConn.Send(req)
+	res, err := w.Connection.Send(req)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return

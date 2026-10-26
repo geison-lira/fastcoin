@@ -42,6 +42,7 @@ func (w *WalletNode) NewWalletNode(coreAddress string, keys string) error {
 		return err
 	}
 	w.CoreAddress = coreAddress
+	w.Connection.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	w.Nonce = time.Now().UnixNano()
 	fmt.Println("[INIT-SUCCESS] Welcome to your new FastCoin wallet, your keys are stored in keys.pem, type h to see commands.")
 	return nil
@@ -61,6 +62,7 @@ func (w *WalletNode) LoadWalletNode(coreAddress string, keys string) error {
 		return err
 	}
 	w.CoreAddress = coreAddress
+	w.Connection.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	w.Nonce = time.Now().UnixNano()
 	fmt.Println("[INIT-SUCCESS] Welcome back to your FastCoin wallet, type h to the see commands.")
 	return nil

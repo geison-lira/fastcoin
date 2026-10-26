@@ -1,6 +1,9 @@
 package wallet
 
-import "crypto/ecdsa"
+import (
+	"crypto/ecdsa"
+	"fastcoin/internal/rpc"
+)
 
 type WalletNode struct {
 	PrivKey       *ecdsa.PrivateKey
@@ -8,4 +11,5 @@ type WalletNode struct {
 	WalletAddress string
 	CoreAddress   string
 	Nonce         int64
+	Connection    rpc.RPCConnection
 }
