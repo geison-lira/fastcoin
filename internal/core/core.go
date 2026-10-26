@@ -34,6 +34,7 @@ func (c *CoreNode) NewCoreNode(coreAddress string, keys string) error {
 	c.Connection.NewConnection("tcp", c.CoreAddress, 3*time.Second)
 	c.Peers = make([]string, 0)
 	c.ListenSigStop = make(chan bool)
+	c.MineSigStop = make(chan bool)
 	fmt.Println("[INIT-SUCCESS] Welcome to your new FastCoin core, type h to see commands.")
 	return nil
 }
