@@ -3,6 +3,7 @@ package core
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fastcoin/internal/rpc"
 	"strconv"
 	"strings"
@@ -88,4 +89,15 @@ func (bc *Blockchain) updateBalances(currBlock Block) {
 		}
 		bc.Balances[tx.Recipient] += tx.Ammount
 	}
+}
+
+func (bc *Blockchain) FetchBalance(walletAddress string) (int64, error) {
+	bc.mu.RLock()
+	defer bc.mu.RUnlock()
+	bl, exists := bc.Balances[walletAddress]
+	if !exists {
+		err := errors.New("wallet does not exist")
+		return 0, err
+	}
+	return bl, nil
 }
