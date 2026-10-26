@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/ecdsa"
 	"fastcoin/internal/handlers"
+	"fastcoin/internal/rpc"
 	"fmt"
 	"os"
 	"strings"
@@ -26,8 +27,10 @@ func (c *CoreNode) NewCoreNode(coreAddress string, keys string) error {
 		fmt.Printf("[INIT-FATAL] Address Generation Error: init-%v\n", err)
 		return err
 	}
+	c.Blockchain = &Blockchain{}
 	c.Blockchain.newBlockchain(difficulty)
 	c.CoreAddress = coreAddress
+	c.Connection = rpc.RPCConnection{}
 	c.Connection.NewConnection("tcp", c.CoreAddress, 3*time.Second)
 	c.Peers = make([]string, 0)
 	c.ListenSigStop = make(chan bool)

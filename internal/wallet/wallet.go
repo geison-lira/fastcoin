@@ -3,6 +3,7 @@ package wallet
 import (
 	"bufio"
 	"fastcoin/internal/handlers"
+	"fastcoin/internal/rpc"
 	"fmt"
 	"os"
 	"strings"
@@ -42,6 +43,7 @@ func (w *WalletNode) NewWalletNode(coreAddress string, keys string) error {
 		return err
 	}
 	w.CoreAddress = coreAddress
+	w.Connection = rpc.RPCConnection{}
 	w.Connection.NewConnection("tcp", w.CoreAddress, 3*time.Second)
 	w.Nonce = time.Now().UnixNano()
 	fmt.Println("[INIT-SUCCESS] Welcome to your new FastCoin wallet, your keys are stored in keys.pem, type h to see commands.")
