@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 const difficulty = 3
@@ -27,6 +28,7 @@ func (c *CoreNode) NewCoreNode(coreAddress string, keys string) error {
 	}
 	c.Blockchain.newBlockchain(difficulty)
 	c.CoreAddress = coreAddress
+	c.Connection.NewConnection("tcp", c.CoreAddress, 3*time.Second)
 	c.Peers = make([]string, 0)
 	c.ListenSigStop = make(chan bool)
 	fmt.Println("[INIT-SUCCESS] Welcome to your new FastCoin core, type h to see commands.")

@@ -1,6 +1,9 @@
 package core
 
-import "sync"
+import (
+	"fastcoin/internal/rpc"
+	"sync"
+)
 
 type CoreNode struct {
 	Blockchain    *Blockchain
@@ -11,5 +14,6 @@ type CoreNode struct {
 	Listening     bool
 	MineSigStop   chan bool
 	Mining        bool
+	Connection    rpc.RPCConnection
 	mu            sync.Mutex
 }

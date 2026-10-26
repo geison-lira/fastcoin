@@ -1,9 +1,7 @@
 package core
 
 import (
-	"fastcoin/internal/rpc"
 	"fmt"
-	"time"
 )
 
 func (c *CoreNode) control(usrInput []string) bool {
@@ -46,9 +44,7 @@ func (c *CoreNode) listen(usrInput []string) {
 			fmt.Println("[CORE-ERROR] Network Listening Error: core-already listening network")
 			return
 		}
-		var rpcConn rpc.RPCConnection
-		rpcConn.NewConnection("tcp", c.CoreAddress, 3*time.Second)
-		err := rpcConn.Handle(c.ListenSigStop)
+		err := c.Connection.Handle(c.ListenSigStop)
 		if err != nil {
 			fmt.Printf("[CORE-ERROR] Network Connection Error: core-%v\n", err)
 			return
