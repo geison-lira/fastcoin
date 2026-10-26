@@ -8,12 +8,13 @@ import (
 	"fmt"
 )
 
-func (t *Transaction) NewTransaction(sender string, recipient string, ammount int64, nonce int64, privKey *ecdsa.PrivateKey) error {
+func (t *Transaction) NewTransaction(sender string, recipient string, ammount int64, nonce int64, privKey *ecdsa.PrivateKey, pubKey string) error {
 	var err error
 	t.Sender = sender
 	t.Recipient = recipient
 	t.Ammount = ammount
 	t.Nonce = nonce
+	t.SenderPubKey = pubKey
 	t.Id = t.Hash()
 	t.Signature, err = t.sign(privKey)
 	return err

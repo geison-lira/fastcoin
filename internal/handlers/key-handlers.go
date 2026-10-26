@@ -5,6 +5,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/pem"
 	"errors"
 	"os"
@@ -85,4 +86,28 @@ func KeysLoad(keys string) (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
 		return nil, nil, errors.New("file missing required keys")
 	}
 	return privKey, pubKey, nil
+}
+
+func PubKeyToString(pubKey *ecdsa.PublicKey) (string, error) {
+	pubBytes, err := x509.MarshalPKIXPublicKey(pubKey)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(pubBytes), nil
+}
+
+func StringToPubKey(pubString string) (*ecdsa.PublicKey, error) {
+	pubBytes, err := hex.DecodeString(pubString)
+	if err != nil {
+		return nil, err
+	}
+	parsedPubKey, err := x509.ParsePKIXPublicKey(pubBytes)
+	if err != nil {
+		return nil, err
+	}
+	pubKey, ok := parsedPubKey.(*ecdsa.PublicKey)
+	if !ok {
+		return nil, errors.New("public key is not ecdsa")
+	}
+	return pubKey, nil
 }

@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"encoding/json"
+	"fastcoin/internal/handlers"
 	"fastcoin/internal/rpc"
 	"fmt"
 	"strconv"
@@ -59,7 +60,12 @@ func (w *WalletNode) transaction(usrInput []string) {
 	recipient := usrInput[1]
 	w.Nonce++
 	var tx rpc.Transaction
-	err = tx.NewTransaction(w.WalletAddress, recipient, ammount, w.Nonce, w.PrivKey)
+	pubKeyString, err := handlers.PubKeyToString(w.PubKey)
+	if err != nil {
+		fmt.Printf("[WALLET-ERROR] Transaction Parsing Error: wallet-%v\n", err)
+		return
+	}
+	err = tx.NewTransaction(w.WalletAddress, recipient, ammount, w.Nonce, w.PrivKey, pubKeyString)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Transaction Signing Error: wallet-%v\n", err)
 		return
