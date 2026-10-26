@@ -21,7 +21,7 @@ func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
 			res.NewResponse(false, nil, err.Error())
 			return res
 		}
-		err := SubmitTransaction(tx)
+		err = c.Blockchain.SubmitTransaction(tx)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
 			return res
@@ -40,11 +40,7 @@ func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
 			res.NewResponse(false, nil, err.Error())
 			return res
 		}
-		bl, txs, err := FetchStatement(stReq.WalletAddress)
-		if err != nil {
-			res.NewResponse(false, nil, err.Error())
-			return res
-		}
+		bl, txs := c.Blockchain.FetchStatement(stReq.WalletAddress)
 		stRes.NewResponse(stReq.WalletAddress, bl, txs)
 		res.NewResponse(true, stRes, "")
 	case "get_bl":
@@ -60,11 +56,7 @@ func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
 			res.NewResponse(false, nil, err.Error())
 			return res
 		}
-		bl, err := FetchBalance(blReq.WalletAddress)
-		if err != nil {
-			res.NewResponse(false, nil, err.Error())
-			return res
-		}
+		bl := c.Blockchain.FetchBalance(blReq.WalletAddress)
 		blRes.NewResponse(blReq.WalletAddress, bl)
 		res.NewResponse(true, blRes, "")
 	default:
