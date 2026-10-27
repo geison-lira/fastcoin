@@ -46,7 +46,7 @@ func (bc *Blockchain) newBlockchain(difficulty int) {
 	bc.Nonces = make(map[string]int64)
 	bc.Difficulty = difficulty
 	var zeroBlock Block
-	zeroBlock.newBlock(0, nil, "0000000000000000000000000000000000000000000000000000000000000000", "SYSTEM")
+	zeroBlock.newBlock(0, nil, "0000000000000000000000000000000000000000000000000000000000000000", "FST-SYSTEM")
 	bc.Blocks = append(bc.Blocks, zeroBlock)
 }
 
@@ -62,7 +62,7 @@ func (bc *Blockchain) mine(miner string, mineSigStop chan bool) {
 			var rewardTx rpc.Transaction
 			prevBlock := bc.Blocks[len(bc.Blocks)-1]
 			nonce := time.Now().Unix()
-			rewardTx.NewReward("SYSTEM", miner, reward, nonce)
+			rewardTx.NewReward("FST-SYSTEM", miner, reward, nonce)
 			txs := append([]rpc.Transaction{rewardTx}, bc.Mempool...)
 			bc.mu.Unlock()
 			var currBlock Block
@@ -82,7 +82,7 @@ func (bc *Blockchain) mine(miner string, mineSigStop chan bool) {
 			bc.mu.Lock()
 			minedTxIds := make(map[string]bool)
 			for _, tx := range currBlock.Transactions {
-				if tx.Sender != "SYSTEM" {
+				if tx.Sender != "FST-SYSTEM" {
 					minedTxIds[tx.Id] = true
 				}
 			}
@@ -102,7 +102,7 @@ func (bc *Blockchain) mine(miner string, mineSigStop chan bool) {
 
 func (bc *Blockchain) updateBalances(currBlock Block) {
 	for _, tx := range currBlock.Transactions {
-		if tx.Sender != "SYSTEM" {
+		if tx.Sender != "FST-SYSTEM" {
 			bc.Balances[tx.Sender] -= tx.Ammount
 		}
 		bc.Balances[tx.Recipient] += tx.Ammount
@@ -115,7 +115,7 @@ func (bc *Blockchain) SubmitTransaction(tx rpc.Transaction) error {
 	if tx.Ammount <= 0 {
 		return errors.New("invalid ammount")
 	}
-	if tx.Sender == "SYSTEM" {
+	if tx.Sender == "FST-SYSTEM" {
 		return nil
 	}
 	if tx.Id != tx.Hash() {
