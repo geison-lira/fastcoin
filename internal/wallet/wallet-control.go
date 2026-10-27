@@ -107,9 +107,8 @@ func (w *WalletNode) statement() {
 		fmt.Printf("[WALLET-ERROR] Statement Fetching Error: core-%s\n", res.Error)
 		return
 	}
-	bytes, _ := json.Marshal(res.Data)
 	var stRes rpc.StatementResponse
-	json.Unmarshal(bytes, &stRes)
+	json.Unmarshal(res.Data, &stRes)
 	fmt.Println("[WALLET-SUCCESS] Statement Fetching Successful")
 	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", stRes.WalletAddress, stRes.Balance)
 	fmt.Println("Transactions:")
@@ -136,9 +135,8 @@ func (w *WalletNode) balance() {
 		fmt.Printf("[WALLET-ERROR] Balance Fetching Error: core-%s\n", res.Error)
 		return
 	}
-	bytes, _ := json.Marshal(res.Data)
 	var blRes rpc.BalanceResponse
-	json.Unmarshal(bytes, &blRes)
+	json.Unmarshal(res.Data, &blRes)
 	fmt.Println("[WALLET-SUCCESS] Balance Fetching Successful")
 	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", blRes.WalletAddress, blRes.Balance)
 }

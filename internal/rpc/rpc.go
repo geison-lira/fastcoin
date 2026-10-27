@@ -19,8 +19,11 @@ func (r *RPCRequest) NewRequest(method string, params any) error {
 
 func (r *RPCResponse) NewResponse(success bool, data any, err string) {
 	r.Success = success
-	r.Data = data
 	r.Error = err
+	if data != nil {
+		bytes, _ := json.Marshal(data)
+		r.Data = json.RawMessage(bytes)
+	}
 }
 
 func (r *RPCConnection) NewConnection(protocol string, address string, timeOut time.Duration) {

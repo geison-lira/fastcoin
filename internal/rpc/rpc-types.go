@@ -11,9 +11,9 @@ type RPCRequest struct {
 }
 
 type RPCResponse struct {
-	Success bool   `json:"success"`
-	Data    any    `json:"data,omitempty"`
-	Error   string `json:"error,omitempty"`
+	Success bool            `json:"success"`
+	Data    json.RawMessage `json:"data,omitempty"`
+	Error   string          `json:"error,omitempty"`
 }
 
 type RPCConnection struct {
