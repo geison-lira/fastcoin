@@ -1,10 +1,13 @@
 package rpc
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type RPCRequest struct {
-	Method string `json:"method"`
-	Params any    `json:"params"`
+	Method string          `json:"method"`
+	Params json.RawMessage `json:"params"`
 }
 
 type RPCResponse struct {

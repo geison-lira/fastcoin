@@ -11,12 +11,7 @@ func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
 	switch req.Method {
 	case "set_tx":
 		var tx rpc.Transaction
-		bytes, err := json.Marshal(req.Params)
-		if err != nil {
-			res.NewResponse(false, nil, err.Error())
-			return res
-		}
-		err = json.Unmarshal(bytes, &tx)
+		err := json.Unmarshal(req.Params, &tx)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
 			return res
@@ -30,12 +25,7 @@ func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
 	case "get_st":
 		var stReq rpc.StatementRequest
 		var stRes rpc.StatementResponse
-		bytes, err := json.Marshal(req.Params)
-		if err != nil {
-			res.NewResponse(false, nil, err.Error())
-			return res
-		}
-		err = json.Unmarshal(bytes, &stReq)
+		err := json.Unmarshal(req.Params, &stReq)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
 			return res
@@ -46,12 +36,7 @@ func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
 	case "get_bl":
 		var blReq rpc.BalanceRequest
 		var blRes rpc.BalanceResponse
-		bytes, err := json.Marshal(req.Params)
-		if err != nil {
-			res.NewResponse(false, nil, err.Error())
-			return res
-		}
-		err = json.Unmarshal(bytes, &blReq)
+		err := json.Unmarshal(req.Params, &blReq)
 		if err != nil {
 			res.NewResponse(false, nil, err.Error())
 			return res

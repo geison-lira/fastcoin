@@ -7,9 +7,14 @@ import (
 	"time"
 )
 
-func (r *RPCRequest) NewRequest(method string, params any) {
+func (r *RPCRequest) NewRequest(method string, params any) error {
 	r.Method = method
-	r.Params = params
+	bytes, err := json.Marshal(params)
+	if err != nil {
+		return err
+	}
+	r.Params = json.RawMessage(bytes)
+	return nil
 }
 
 func (r *RPCResponse) NewResponse(success bool, data any, err string) {

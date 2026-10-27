@@ -71,7 +71,11 @@ func (w *WalletNode) transaction(usrInput []string) {
 		return
 	}
 	var req rpc.RPCRequest
-	req.NewRequest("set_tx", tx)
+	err = req.NewRequest("set_tx", tx)
+	if err != nil {
+		fmt.Printf("[WALLET-ERROR] Transaction Parsing Error: wallet-%v\n", err)
+		return
+	}
 	res, err := w.Connection.Send(req)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
@@ -89,7 +93,11 @@ func (w *WalletNode) statement() {
 	var stReq rpc.StatementRequest
 	stReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
-	req.NewRequest("get_st", stReq)
+	err := req.NewRequest("get_st", stReq)
+	if err != nil {
+		fmt.Printf("[WALLET-ERROR] Statement Parsing Error: wallet-%v\n", err)
+		return
+	}
 	res, err := w.Connection.Send(req)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
@@ -114,7 +122,11 @@ func (w *WalletNode) balance() {
 	var blReq rpc.BalanceRequest
 	blReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
-	req.NewRequest("get_bl", blReq)
+	err := req.NewRequest("get_bl", blReq)
+	if err != nil {
+		fmt.Printf("[WALLET-ERROR] Balance Parsing Error: wallet-%v\n", err)
+		return
+	}
 	res, err := w.Connection.Send(req)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
