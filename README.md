@@ -4,4 +4,4 @@
 
 ### How to run
 
-### Architecure
+### Architecture
