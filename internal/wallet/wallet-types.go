@@ -11,5 +11,6 @@ type WalletNode struct {
 	WalletAddress string
 	CoreAddress   string
 	Nonce         int64
+	Peers         []string
 	Connection    rpc.RPCConnection
 }

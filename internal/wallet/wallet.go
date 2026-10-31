@@ -3,14 +3,13 @@ package wallet
 import (
 	"bufio"
 	"fastcoin/internal/handlers"
-	"fastcoin/internal/rpc"
 	"fmt"
 	"os"
 	"strings"
 	"time"
 )
 
-func (w *WalletNode) NewWalletNode(coreAddress string, keys string) error {
+func (w *WalletNode) NewWalletNode(peers string, keys string) error {
 	var err error
 	fmt.Printf("[INIT-INFO] No keys found, generate new keys? [y/n] ")
 	scanner := bufio.NewScanner(os.Stdin)
@@ -42,15 +41,22 @@ func (w *WalletNode) NewWalletNode(coreAddress string, keys string) error {
 		fmt.Printf("[INIT-FATAL] Address Generation Error: init-%v\n", err)
 		return err
 	}
-	w.CoreAddress = coreAddress
-	w.Connection = rpc.RPCConnection{}
-	w.Connection.NewConnection("tcp", w.CoreAddress, 3*time.Second)
+	w.Peers, err = handlers.PeersLoad(peers)
+	if err != nil {
+		fmt.Printf("[INIT-FATAL] Peer Load Error: init-%v\n", err)
+		return err
+	}
+	w.CoreAddress, w.Connection, err = w.activeCore()
+	if err != nil {
+		fmt.Printf("[INIT-FATAL] Network Connection Error: init-%v\n", err)
+		return err
+	}
 	w.Nonce = time.Now().UnixNano()
 	fmt.Println("[INIT-SUCCESS] Welcome to your new FastCoin wallet, your keys are stored in keys.pem, type h to see commands.")
 	return nil
 }
 
-func (w *WalletNode) LoadWalletNode(coreAddress string, keys string) error {
+func (w *WalletNode) LoadWalletNode(peers string, keys string) error {
 	var err error
 	fmt.Println("[INIT-INFO] Keys found, loading wallet.")
 	w.PrivKey, w.PubKey, err = handlers.KeysLoad(keys)
@@ -63,8 +69,16 @@ func (w *WalletNode) LoadWalletNode(coreAddress string, keys string) error {
 		fmt.Printf("[INIT-FATAL] Address Generation Error: init-%v\n", err)
 		return err
 	}
-	w.CoreAddress = coreAddress
-	w.Connection.NewConnection("tcp", w.CoreAddress, 3*time.Second)
+	w.Peers, err = handlers.PeersLoad(peers)
+	if err != nil {
+		fmt.Printf("[INIT-FATAL] Peer Load Error: init-%v\n", err)
+		return err
+	}
+	w.CoreAddress, w.Connection, err = w.activeCore()
+	if err != nil {
+		fmt.Printf("[INIT-FATAL] Network Connection Error: init-%v\n", err)
+		return err
+	}
 	w.Nonce = time.Now().UnixNano()
 	fmt.Println("[INIT-SUCCESS] Welcome back to your FastCoin wallet, type h to the see commands.")
 	return nil
