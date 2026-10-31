@@ -9,6 +9,10 @@ import (
 
 func (r *RPCRequest) NewRequest(method string, params any) error {
 	r.Method = method
+	if params == nil {
+		r.Params = nil
+		return nil
+	}
 	bytes, err := json.Marshal(params)
 	if err != nil {
 		return err

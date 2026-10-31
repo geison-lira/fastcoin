@@ -7,7 +7,7 @@ import (
 
 type RPCRequest struct {
 	Method string          `json:"method"`
-	Params json.RawMessage `json:"params"`
+	Params json.RawMessage `json:"params,omitempty"`
 }
 
 type RPCResponse struct {
