@@ -44,6 +44,8 @@ func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
 		bl := c.Blockchain.FetchBalance(blReq.WalletAddress)
 		blRes.NewResponse(blReq.WalletAddress, bl)
 		res.NewResponse(true, blRes, "")
+	case "ping":
+		res.NewResponse(true, nil, "")
 	default:
 		err := errors.New("unknown procedure")
 		res.NewResponse(false, nil, err.Error())
