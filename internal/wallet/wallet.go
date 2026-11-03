@@ -84,7 +84,7 @@ func (w *WalletNode) LoadWalletNode(peers string, keys string) error {
 	return nil
 }
 
-func (w *WalletNode) Enter(keys string) error {
+func (w *WalletNode) Enter() error {
 	var err error
 	scanner := bufio.NewScanner(os.Stdin)
 	for {

@@ -30,7 +30,7 @@ func Run(node string, keys string, peers string) error {
 				break
 			}
 		}
-		err = wallet.Enter(keys)
+		err = wallet.Enter()
 	case "core":
 		var core core.CoreNode
 		fmt.Println("[INIT-INFO] Launching core...")
@@ -43,7 +43,7 @@ func Run(node string, keys string, peers string) error {
 		if err != nil {
 			break
 		}
-		err = core.Enter(keys)
+		err = core.Enter()
 	default:
 		err = errors.New("invalid node type")
 		fmt.Printf("[INIT-FATAL] Unknown Node Error: init-%v\n", err)

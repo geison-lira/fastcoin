@@ -39,7 +39,7 @@ func (c *CoreNode) NewCoreNode(coreAddress string, keys string) error {
 	return nil
 }
 
-func (c *CoreNode) Enter(keys string) error {
+func (c *CoreNode) Enter() error {
 	var err error
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
