@@ -93,6 +93,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 	}
 	var res *rpc.RPCResponse
 	var connection rpc.RPCConnection
+	w.Nonce++
 	for range 10 {
 		coreAddress := handlers.PeersSelect(w.Peers)
 		connection.NewConnection("tcp", coreAddress, 3*time.Second)
@@ -109,7 +110,6 @@ func (w *WalletNode) transaction(usrInput []string) {
 		fmt.Printf("[WALLET-ERROR] Transaction Broadcast Error: core-%s\n", res.Error)
 		return
 	}
-	w.Nonce++
 	fmt.Println("[WALLET-SUCCESS] Transaction Broadcast Successful")
 	fmt.Printf("(%s) %s -> %s: %d FST | Signature: %s\n", tx.Id, tx.Sender, tx.Recipient, tx.Ammount, tx.Signature)
 }
