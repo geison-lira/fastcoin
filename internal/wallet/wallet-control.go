@@ -74,25 +74,25 @@ func (w *WalletNode) transaction(usrInput []string) {
 		return
 	}
 	recipient := usrInput[1]
-	var tx rpc.Transaction
 	pubKeyString, err := handlers.PubKeyToString(w.PubKey)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Transaction Parsing Error: wallet-%v\n", err)
 		return
 	}
+	var tx rpc.Transaction
 	err = tx.NewTransaction(w.WalletAddress, recipient, ammount, w.Nonce, w.PrivKey, pubKeyString)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Transaction Signing Error: wallet-%v\n", err)
 		return
 	}
 	var req rpc.RPCRequest
-	var res *rpc.RPCResponse
-	var connection rpc.RPCConnection
 	err = req.NewRequest("set_tx", tx)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Transaction Parsing Error: wallet-%v\n", err)
 		return
 	}
+	var res *rpc.RPCResponse
+	var connection rpc.RPCConnection
 	for range 10 {
 		coreAddress := handlers.PeersSelect(w.Peers)
 		connection.NewConnection("tcp", coreAddress, 3*time.Second)
@@ -111,7 +111,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 	}
 	w.Nonce++
 	fmt.Println("[WALLET-SUCCESS] Transaction Broadcast Successful")
-	fmt.Printf("TxId: %s\n", tx.Id)
+	fmt.Printf("(%s) %s -> %s: %d FST | Signature: %s\n", tx.Id, tx.Sender, tx.Recipient, tx.Ammount, tx.Signature)
 }
 
 func (w *WalletNode) statement() {
