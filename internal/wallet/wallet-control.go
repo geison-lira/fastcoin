@@ -148,7 +148,7 @@ func (w *WalletNode) statement() {
 	fmt.Printf("Wallet: %s\nBalance: %d FST\n", w.WalletAddress, stRes.Balance)
 	fmt.Println("Transactions:")
 	for _, tx := range stRes.Transactions {
-		fmt.Printf("(%s) %s -> %s: %d FST\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
+		fmt.Printf("(%s) %s -> %s: %d FST | Signature: %s\n", tx.Id, tx.Sender, tx.Recipient, tx.Ammount, tx.Signature)
 	}
 }
 
