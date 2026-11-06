@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bufio"
+	"math/rand"
 	"os"
 	"strings"
 )
@@ -21,4 +22,9 @@ func PeersLoad(peers string) ([]string, error) {
 		}
 	}
 	return parsedPeers, scanner.Err()
+}
+
+func PeersSelect(peers []string) string {
+	randomId := rand.Intn(len(peers))
+	return peers[randomId]
 }
