@@ -5,7 +5,6 @@ type StatementRequest struct {
 }
 
 type StatementResponse struct {
-	WalletAddress string        `json:"address"`
-	Balance       int64         `json:"balance"`
-	Transactions  []Transaction `json:"transactions"`
+	Balance      int64         `json:"balance"`
+	Transactions []Transaction `json:"transactions"`
 }

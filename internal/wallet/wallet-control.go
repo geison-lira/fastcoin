@@ -119,13 +119,13 @@ func (w *WalletNode) statement() {
 	var stReq rpc.StatementRequest
 	stReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
-	var res *rpc.RPCResponse
-	var connection rpc.RPCConnection
 	err = req.NewRequest("get_st", stReq)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Statement Parsing Error: wallet-%v\n", err)
 		return
 	}
+	var res *rpc.RPCResponse
+	var connection rpc.RPCConnection
 	for range 10 {
 		coreAddress := handlers.PeersSelect(w.Peers)
 		connection.NewConnection("tcp", coreAddress, 3*time.Second)
@@ -145,7 +145,7 @@ func (w *WalletNode) statement() {
 	var stRes rpc.StatementResponse
 	json.Unmarshal(res.Data, &stRes)
 	fmt.Println("[WALLET-SUCCESS] Statement Fetching Successful")
-	fmt.Printf("Wallet: %s\nBalance: %d FST\n", stRes.WalletAddress, stRes.Balance)
+	fmt.Printf("Wallet: %s\nBalance: %d FST\n", w.WalletAddress, stRes.Balance)
 	fmt.Println("Transactions:")
 	for _, tx := range stRes.Transactions {
 		fmt.Printf("(%s) %s -> %s: %d FST\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
@@ -157,13 +157,13 @@ func (w *WalletNode) balance() {
 	var blReq rpc.BalanceRequest
 	blReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
-	var res *rpc.RPCResponse
-	var connection rpc.RPCConnection
 	err = req.NewRequest("get_bl", blReq)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Balance Parsing Error: wallet-%v\n", err)
 		return
 	}
+	var res *rpc.RPCResponse
+	var connection rpc.RPCConnection
 	for range 10 {
 		coreAddress := handlers.PeersSelect(w.Peers)
 		connection.NewConnection("tcp", coreAddress, 3*time.Second)
@@ -183,7 +183,7 @@ func (w *WalletNode) balance() {
 	var blRes rpc.BalanceResponse
 	json.Unmarshal(res.Data, &blRes)
 	fmt.Println("[WALLET-SUCCESS] Balance Fetching Successful")
-	fmt.Printf("Wallet: %s\nBalance: %d FST\n", blRes.WalletAddress, blRes.Balance)
+	fmt.Printf("Wallet: %s\nBalance: %d FST\n", w.WalletAddress, blRes.Balance)
 }
 
 func (w *WalletNode) address() {

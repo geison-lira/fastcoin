@@ -31,7 +31,7 @@ func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
 			return res
 		}
 		bl, txs := c.Blockchain.FetchStatement(stReq.WalletAddress)
-		stRes.NewResponse(stReq.WalletAddress, bl, txs)
+		stRes.NewResponse(bl, txs)
 		res.NewResponse(true, stRes, "")
 	case "get_bl":
 		var blReq rpc.BalanceRequest
@@ -42,7 +42,7 @@ func (c *CoreNode) procedures(req rpc.RPCRequest) rpc.RPCResponse {
 			return res
 		}
 		bl := c.Blockchain.FetchBalance(blReq.WalletAddress)
-		blRes.NewResponse(blReq.WalletAddress, bl)
+		blRes.NewResponse(bl)
 		res.NewResponse(true, blRes, "")
 	case "ping":
 		res.NewResponse(true, nil, "")

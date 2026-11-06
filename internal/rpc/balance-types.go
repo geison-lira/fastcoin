@@ -5,6 +5,5 @@ type BalanceRequest struct {
 }
 
 type BalanceResponse struct {
-	WalletAddress string `json:"address"`
-	Balance       int64  `json:"balance"`
+	Balance int64 `json:"balance"`
 }
