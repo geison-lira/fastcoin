@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"encoding/json"
+	"errors"
 	"fastcoin/internal/handlers"
 	"fastcoin/internal/rpc"
 	"fmt"
@@ -10,40 +11,46 @@ import (
 )
 
 func (w *WalletNode) control(usrInput []string) bool {
+	var err error
 	switch usrInput[0] {
 	case "tx":
 		if len(usrInput) == 3 {
 			w.transaction(usrInput[1:])
 		} else {
-			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			err = errors.New("wrong command syntax")
+			fmt.Printf("[WALLET-ERROR] Command Typing Error: wallet-%v\n", err)
 		}
 	case "st":
 		if len(usrInput) == 1 {
 			w.statement()
 		} else {
-			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			err = errors.New("wrong command syntax")
+			fmt.Printf("[WALLET-ERROR] Command Typing Error: wallet-%v\n", err)
 		}
 	case "bl":
 		if len(usrInput) == 1 {
 			w.balance()
 		} else {
-			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			err = errors.New("wrong command syntax")
+			fmt.Printf("[WALLET-ERROR] Command Typing Error: wallet-%v\n", err)
 		}
 	case "h":
 		if len(usrInput) == 1 {
 			w.help()
 		} else {
-			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			err = errors.New("wrong command syntax")
+			fmt.Printf("[WALLET-ERROR] Command Typing Error: wallet-%v\n", err)
 		}
 	case "q":
 		if len(usrInput) == 1 {
-			fmt.Println("[WALLET-INFO] Exiting wallet...")
 			return true
 		} else {
-			fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-wrong command syntax (type h for help).")
+			err = errors.New("wrong command syntax")
+			fmt.Printf("[WALLET-ERROR] Command Typing Error: wallet-%v\n", err)
 		}
 	default:
-		fmt.Println("[WALLET-ERROR] Command Typing Error: wallet-unknown command (type h for help).")
+		err = errors.New("unknown command")
+		fmt.Printf("[WALLET-ERROR] Command Typing Error: wallet-%v\n", err)
 	}
 	return false
 }

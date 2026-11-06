@@ -91,6 +91,7 @@ func (w *WalletNode) Enter() error {
 		}
 		exit := w.control(usrInput)
 		if exit {
+			fmt.Println("[WALLET-INFO] Closing wallet...")
 			return nil
 		}
 	}
