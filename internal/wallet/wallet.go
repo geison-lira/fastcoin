@@ -18,6 +18,16 @@ func (w *WalletNode) NewWalletNode(peers string, keys string) error {
 		fmt.Printf("[INIT-FATAL] Peers Inexistence Error: init-%v\n", err)
 		return err
 	}
+	w.Peers, err = handlers.PeersLoad(peers)
+	if err != nil {
+		fmt.Printf("[INIT-FATAL] Peer Load Error: init-%v\n", err)
+		return err
+	}
+	if len(w.Peers) == 0 {
+		err = errors.New("no peers detected")
+		fmt.Printf("[INIT-FATAL] Peer Selection Error: wallet-%v\n", err)
+		return err
+	}
 	if !utils.FileExists(keys) {
 		fmt.Printf("[INIT-INFO] No keys found, generate new keys? [y/n] ")
 		scanner := bufio.NewScanner(os.Stdin)
@@ -55,16 +65,6 @@ func (w *WalletNode) NewWalletNode(peers string, keys string) error {
 	w.WalletAddress, err = handlers.AddressGenerate(w.PubKey)
 	if err != nil {
 		fmt.Printf("[INIT-FATAL] Address Generation Error: init-%v\n", err)
-		return err
-	}
-	w.Peers, err = handlers.PeersLoad(peers)
-	if err != nil {
-		fmt.Printf("[INIT-FATAL] Peer Load Error: init-%v\n", err)
-		return err
-	}
-	if len(w.Peers) == 0 {
-		err = errors.New("no peers detected")
-		fmt.Printf("[INIT-FATAL] Peer Selection Error: wallet-%v\n", err)
 		return err
 	}
 	w.Nonce = time.Now().UnixNano()
