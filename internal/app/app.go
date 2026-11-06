@@ -14,21 +14,9 @@ func Run(node string, keys string, peers string) error {
 	case "wallet":
 		var wallet wallet.WalletNode
 		fmt.Println("[INIT-INFO] Launching wallet...")
-		if !utils.FileExists(peers) {
-			err = errors.New("missing peer nodes file")
-			fmt.Printf("[INIT-FATAL] Peers Inexistence Error: init-%v\n", err)
+		err = wallet.NewWalletNode(peers, keys)
+		if err != nil {
 			return err
-		}
-		if !utils.FileExists(keys) {
-			err = wallet.NewWalletNode(peers, keys)
-			if err != nil {
-				return err
-			}
-		} else {
-			err = wallet.LoadWalletNode(peers, keys)
-			if err != nil {
-				return err
-			}
 		}
 		err = wallet.Enter()
 		if err != nil {
