@@ -34,6 +34,13 @@ func (w *WalletNode) control(usrInput []string) bool {
 			err = errors.New("wrong command syntax")
 			fmt.Printf("[WALLET-ERROR] Command Typing Error: wallet-%v\n", err)
 		}
+	case "ad":
+		if len(usrInput) == 1 {
+			w.address()
+		} else {
+			err = errors.New("wrong command syntax")
+			fmt.Printf("[WALLET-ERROR] Command Typing Error: wallet-%v\n", err)
+		}
 	case "h":
 		if len(usrInput) == 1 {
 			w.help()
@@ -179,11 +186,17 @@ func (w *WalletNode) balance() {
 	fmt.Printf("Wallet: %s\nBalance: %d FST\n", blRes.WalletAddress, blRes.Balance)
 }
 
+func (w *WalletNode) address() {
+	fmt.Println("[WALLET-SUCCESS] Address Fetching Successful")
+	fmt.Printf("Wallet: %s\n", w.WalletAddress)
+}
+
 func (w *WalletNode) help() {
 	fmt.Println("      Command      |            Structure            ")
 	fmt.Println("Send Currency      |  tx <ammount> <recipient_pubKey>")
 	fmt.Println("Check Statement    |  st                             ")
 	fmt.Println("Check Balance      |  bl                             ")
+	fmt.Println("Check Address      |  ad                             ")
 	fmt.Println("Command List Help  |  h                              ")
 	fmt.Println("Quit Program       |  q                              ")
 }
