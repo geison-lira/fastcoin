@@ -6,6 +6,7 @@ import (
 	"fastcoin/internal/rpc"
 	"fmt"
 	"strconv"
+	"time"
 )
 
 func (w *WalletNode) control(usrInput []string) bool {
@@ -48,6 +49,7 @@ func (w *WalletNode) control(usrInput []string) bool {
 }
 
 func (w *WalletNode) transaction(usrInput []string) {
+	var err error
 	ammount, err := strconv.ParseInt(usrInput[0], 10, 64)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Transaction Parsing Error: wallet-%v\n", err)
@@ -58,7 +60,6 @@ func (w *WalletNode) transaction(usrInput []string) {
 		return
 	}
 	recipient := usrInput[1]
-	w.Nonce++
 	var tx rpc.Transaction
 	pubKeyString, err := handlers.PubKeyToString(w.PubKey)
 	if err != nil {
@@ -71,12 +72,21 @@ func (w *WalletNode) transaction(usrInput []string) {
 		return
 	}
 	var req rpc.RPCRequest
+	var res *rpc.RPCResponse
+	var connection rpc.RPCConnection
 	err = req.NewRequest("set_tx", tx)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Transaction Parsing Error: wallet-%v\n", err)
 		return
 	}
-	res, err := w.Connection.Send(req)
+	for range 10 {
+		coreAddress := handlers.PeersSelect(w.Peers)
+		connection.NewConnection("tcp", coreAddress, 3*time.Second)
+		res, err = connection.Send(req)
+		if err == nil {
+			break
+		}
+	}
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return
@@ -85,20 +95,31 @@ func (w *WalletNode) transaction(usrInput []string) {
 		fmt.Printf("[WALLET-ERROR] Transaction Broadcast Error: core-%s\n", res.Error)
 		return
 	}
+	w.Nonce++
 	fmt.Println("[WALLET-SUCCESS] Transaction Broadcast Successful")
 	fmt.Printf("TxId: %s\n", tx.Id)
 }
 
 func (w *WalletNode) statement() {
+	var err error
 	var stReq rpc.StatementRequest
 	stReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
-	err := req.NewRequest("get_st", stReq)
+	var res *rpc.RPCResponse
+	var connection rpc.RPCConnection
+	err = req.NewRequest("get_st", stReq)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Statement Parsing Error: wallet-%v\n", err)
 		return
 	}
-	res, err := w.Connection.Send(req)
+	for range 10 {
+		coreAddress := handlers.PeersSelect(w.Peers)
+		connection.NewConnection("tcp", coreAddress, 3*time.Second)
+		res, err = connection.Send(req)
+		if err == nil {
+			break
+		}
+	}
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return
@@ -118,15 +139,25 @@ func (w *WalletNode) statement() {
 }
 
 func (w *WalletNode) balance() {
+	var err error
 	var blReq rpc.BalanceRequest
 	blReq.NewRequest(w.WalletAddress)
 	var req rpc.RPCRequest
-	err := req.NewRequest("get_bl", blReq)
+	var res *rpc.RPCResponse
+	var connection rpc.RPCConnection
+	err = req.NewRequest("get_bl", blReq)
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Balance Parsing Error: wallet-%v\n", err)
 		return
 	}
-	res, err := w.Connection.Send(req)
+	for range 10 {
+		coreAddress := handlers.PeersSelect(w.Peers)
+		connection.NewConnection("tcp", coreAddress, 3*time.Second)
+		res, err = connection.Send(req)
+		if err == nil {
+			break
+		}
+	}
 	if err != nil {
 		fmt.Printf("[WALLET-ERROR] Network Connection Error: wallet-%v\n", err)
 		return

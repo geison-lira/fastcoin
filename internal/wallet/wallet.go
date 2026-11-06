@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"bufio"
+	"errors"
 	"fastcoin/internal/handlers"
 	"fmt"
 	"os"
@@ -46,9 +47,9 @@ func (w *WalletNode) NewWalletNode(peers string, keys string) error {
 		fmt.Printf("[INIT-FATAL] Peer Load Error: init-%v\n", err)
 		return err
 	}
-	w.CoreAddress, w.Connection, err = w.activeCore()
-	if err != nil {
-		fmt.Printf("[INIT-FATAL] Network Connection Error: init-%v\n", err)
+	if len(w.Peers) == 0 {
+		err = errors.New("no peers detected")
+		fmt.Printf("[INIT-FATAL] Peer Selection Error: wallet-%v\n", err)
 		return err
 	}
 	w.Nonce = time.Now().UnixNano()
@@ -74,9 +75,9 @@ func (w *WalletNode) LoadWalletNode(peers string, keys string) error {
 		fmt.Printf("[INIT-FATAL] Peer Load Error: init-%v\n", err)
 		return err
 	}
-	w.CoreAddress, w.Connection, err = w.activeCore()
-	if err != nil {
-		fmt.Printf("[INIT-FATAL] Network Connection Error: init-%v\n", err)
+	if len(w.Peers) == 0 {
+		err = errors.New("no peers detected")
+		fmt.Printf("[INIT-FATAL] Peer Selection Error: wallet-%v\n", err)
 		return err
 	}
 	w.Nonce = time.Now().UnixNano()
