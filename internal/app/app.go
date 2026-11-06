@@ -3,7 +3,6 @@ package app
 import (
 	"errors"
 	"fastcoin/internal/core"
-	"fastcoin/internal/utils"
 	"fastcoin/internal/wallet"
 	"fmt"
 )
@@ -25,11 +24,6 @@ func Run(node string, keys string, peers string) error {
 	case "core":
 		var core core.CoreNode
 		fmt.Println("[INIT-INFO] Launching core...")
-		if !utils.FileExists(keys) {
-			err = errors.New("missing miner wallet keys")
-			fmt.Printf("[INIT-FATAL] Keys Inexistence Error: init-%v\n", err)
-			return err
-		}
 		err = core.NewCoreNode("127.0.0.1:9000", keys)
 		if err != nil {
 			return err

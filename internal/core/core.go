@@ -3,8 +3,10 @@ package core
 import (
 	"bufio"
 	"crypto/ecdsa"
+	"errors"
 	"fastcoin/internal/handlers"
 	"fastcoin/internal/rpc"
+	"fastcoin/internal/utils"
 	"fmt"
 	"os"
 	"strings"
@@ -15,6 +17,11 @@ const difficulty = 3
 
 func (c *CoreNode) NewCoreNode(coreAddress string, keys string) error {
 	var err error
+	if !utils.FileExists(keys) {
+		err = errors.New("missing miner wallet keys")
+		fmt.Printf("[INIT-FATAL] Keys Inexistence Error: init-%v\n", err)
+		return err
+	}
 	var pubKey *ecdsa.PublicKey
 	fmt.Println("[INIT-INFO] Keys found, loading core.")
 	_, pubKey, err = handlers.KeysLoad(keys)
