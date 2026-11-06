@@ -138,7 +138,7 @@ func (w *WalletNode) statement() {
 	var stRes rpc.StatementResponse
 	json.Unmarshal(res.Data, &stRes)
 	fmt.Println("[WALLET-SUCCESS] Statement Fetching Successful")
-	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", stRes.WalletAddress, stRes.Balance)
+	fmt.Printf("Wallet: %s\nBalance: %d FST\n", stRes.WalletAddress, stRes.Balance)
 	fmt.Println("Transactions:")
 	for _, tx := range stRes.Transactions {
 		fmt.Printf("(%s) %s -> %s: %d FST\n", tx.Id[:8], tx.Sender[:8], tx.Recipient[:8], tx.Ammount)
@@ -176,7 +176,7 @@ func (w *WalletNode) balance() {
 	var blRes rpc.BalanceResponse
 	json.Unmarshal(res.Data, &blRes)
 	fmt.Println("[WALLET-SUCCESS] Balance Fetching Successful")
-	fmt.Printf("Wallet:\n%s\nBalance:\n%d FST\n", blRes.WalletAddress, blRes.Balance)
+	fmt.Printf("Wallet: %s\nBalance: %d FST\n", blRes.WalletAddress, blRes.Balance)
 }
 
 func (w *WalletNode) help() {
