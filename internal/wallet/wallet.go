@@ -78,8 +78,7 @@ func (w *WalletNode) Enter() error {
 	for {
 		fmt.Printf("fastcoin-wallet@%s...> ", w.WalletAddress[:8])
 		if !scanner.Scan() {
-			err = scanner.Err()
-			if err != nil {
+			if err = scanner.Err(); err != nil {
 				fmt.Printf("[WALLET-FATAL] Input Read Error: wallet-%v\n", err)
 				return err
 			}
