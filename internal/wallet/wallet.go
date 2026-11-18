@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (w *Node) NewWalletNode(peers string, keys string) error {
+func (w *Node) New(peers string, keys string) error {
 	var err error
 	if !utils.FileExists(peers) {
 		err = errors.New("missing peer nodes file")
