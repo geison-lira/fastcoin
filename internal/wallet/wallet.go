@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (w *WalletNode) NewWalletNode(peers string, keys string) error {
+func (w *Node) NewWalletNode(peers string, keys string) error {
 	var err error
 	if !utils.FileExists(peers) {
 		err = errors.New("missing peer nodes file")
@@ -72,7 +72,7 @@ func (w *WalletNode) NewWalletNode(peers string, keys string) error {
 	return nil
 }
 
-func (w *WalletNode) Enter() error {
+func (w *Node) Enter() error {
 	var err error
 	scanner := bufio.NewScanner(os.Stdin)
 	for {

@@ -4,7 +4,7 @@ import (
 	"crypto/ecdsa"
 )
 
-type WalletNode struct {
+type Node struct {
 	PrivKey       *ecdsa.PrivateKey
 	PubKey        *ecdsa.PublicKey
 	WalletAddress string

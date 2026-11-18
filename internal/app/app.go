@@ -11,7 +11,7 @@ func Run(node string, keys string, peers string) error {
 	var err error
 	switch node {
 	case "wallet":
-		var wallet wallet.WalletNode
+		var wallet wallet.Node
 		fmt.Println("[INIT-INFO] Launching wallet...")
 		err = wallet.NewWalletNode(peers, keys)
 		if err != nil {

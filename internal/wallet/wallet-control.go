@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (w *WalletNode) control(usrInput []string) bool {
+func (w *Node) control(usrInput []string) bool {
 	var err error
 	switch usrInput[0] {
 	case "tx":
@@ -62,7 +62,7 @@ func (w *WalletNode) control(usrInput []string) bool {
 	return false
 }
 
-func (w *WalletNode) transaction(usrInput []string) {
+func (w *Node) transaction(usrInput []string) {
 	var err error
 	ammount, err := strconv.ParseInt(usrInput[0], 10, 64)
 	if err != nil {
@@ -114,7 +114,7 @@ func (w *WalletNode) transaction(usrInput []string) {
 	fmt.Printf("(%s) %s -> %s: %d FST | Signature: %s\n", tx.Id, tx.Sender, tx.Recipient, tx.Ammount, tx.Signature)
 }
 
-func (w *WalletNode) statement() {
+func (w *Node) statement() {
 	var err error
 	var stReq rpc.StatementRequest
 	stReq.NewRequest(w.WalletAddress)
@@ -152,7 +152,7 @@ func (w *WalletNode) statement() {
 	}
 }
 
-func (w *WalletNode) balance() {
+func (w *Node) balance() {
 	var err error
 	var blReq rpc.BalanceRequest
 	blReq.NewRequest(w.WalletAddress)
@@ -186,12 +186,12 @@ func (w *WalletNode) balance() {
 	fmt.Printf("Wallet: %s\nBalance: %d FST\n", w.WalletAddress, blRes.Balance)
 }
 
-func (w *WalletNode) address() {
+func (w *Node) address() {
 	fmt.Println("[WALLET-SUCCESS] Address Fetching Successful")
 	fmt.Printf("Wallet: %s\n", w.WalletAddress)
 }
 
-func (w *WalletNode) help() {
+func (w *Node) help() {
 	fmt.Println("      Command      |            Structure            ")
 	fmt.Println("Send Currency      |  tx <ammount> <recipient_pubKey>")
 	fmt.Println("Check Statement    |  st                             ")
